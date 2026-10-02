@@ -1,443 +1,552 @@
-# Yuri Morrison — Portfolio Blueprint
+# Personal Portfolio & Interactive Dashboard
 
-## 1. Project Overview
+## Master Blueprint
 
-A personal portfolio and interactive personal dashboard for Yuri Morrison.
+This file remains the canonical project overview and requirements record. The focused guides below add implementation instructions for each workstream; update both this blueprint and the relevant guide when a decision changes.
+
+## Project Guides
+
+- [Portfolio content and case studies](docs/portfolio-content.md)
+- [Design system and reusable components](docs/design-system.md)
+- [Technical architecture and security](docs/technical-architecture.md)
+- [Personal applications: Spotify, League, and library](docs/personal-apps.md)
+- [Development workflow and roadmap](docs/development-roadmap.md)
+
+---
+
+# 1. Project Overview
+
+This project is a personal portfolio website and interactive personal dashboard for **Yuri Andrei B. Morrison**.
 
 The website serves two primary purposes:
 
-1. Present Yuri as a Software / AI Engineer with supporting strengths in project coordination, leadership, and technical communication.
-2. Provide a functional, personal space that reflects Yuri's interests in music, games, books, and technology.
+1. Present Yuri professionally as a **Software / AI Engineer**.
+2. Demonstrate engineering ability through functional interactive systems built into the website.
 
-The website should feel like a real software product rather than a conventional resume website.
+The professional portfolio is the priority. Personal and hobby features should complement the professional identity rather than compete with it.
 
-The professional portfolio remains the primary purpose of the site. Hobby-related functionality should complement the portfolio and demonstrate engineering ability without overwhelming the professional content.
+The website should communicate that Yuri:
+
+> **Builds software, understands how systems fit together, and can help people move projects from ideas to working products.**
+
+The site itself should function as a demonstration of those capabilities.
 
 ---
 
-# 2. Core Positioning
+# 2. Core Identity
 
 ## Primary Identity
 
-Software / AI Engineer
+**Software / AI Engineer**
 
-## Supporting Identity
+## Supporting Identities
 
-Project Coordinator / Technical Project Contributor / Technical Leader
+* Project Coordinator
+* Technical Project Contributor
+* Technical Leader
+* Full-Stack Developer
+* AI Systems Builder
 
-## Core Message
+These supporting identities should strengthen the engineering profile rather than replace it.
 
-> I build software, understand how systems fit together, and can help people move projects from ideas to working products.
+The portfolio should not present Yuri primarily as a project manager.
 
-The website should demonstrate:
+The central narrative is:
 
-- Software engineering
-- AI / intelligent systems
-- Full-stack development
-- API integration
-- Data handling
-- Cloud technologies
-- Product thinking
-- Project coordination
-- Leadership
-- Technical communication
-- Curiosity and personal interests
+> **I build things, understand how they fit together, and can help people move them from ideas to working products.**
 
 ---
 
-# 3. Design Direction
+# 3. Portfolio Philosophy
 
-## Overall Aesthetic
+The website should demonstrate engineering ability through both its content and implementation.
 
-Clean, technical, editorial, and slightly experimental.
+Professional content should answer:
 
-Avoid the generic "developer portfolio" aesthetic.
+> **Who is Yuri as an engineer?**
 
-Avoid excessive:
+Projects should answer:
 
-- Neon gradients
-- Glowing cards
-- Excessive glassmorphism
-- Generic AI imagery
-- Stock illustrations
-- Constant animations
-- Excessive rounded cards
-- Overly corporate layouts
+> **What can Yuri build?**
 
-The design should feel intentional and contemporary.
+Personal features should answer:
 
-## Visual Characteristics
+> **What does Yuri care about and enjoy?**
 
-- Strong typography
-- Large editorial headings
-- Generous whitespace
-- Restrained color palette
-- Thin borders
-- Subtle interaction effects
-- Clear information hierarchy
-- Technical metadata
-- Asymmetric layouts where appropriate
-- Occasional visual/data-driven elements
+Functional systems should answer:
 
-## Typography
+> **Can Yuri actually engineer the systems described here?**
 
-Primary font candidate:
+The website should therefore avoid being purely a static résumé.
 
-- Satoshi
-
-Alternative candidates:
-
-- Instrument Sans
-- Geist
-- Space Grotesk
-- Manrope
-
-Typography should provide much of the site's visual personality rather than relying heavily on decoration.
+It should feel like a personal engineering environment that happens to contain a portfolio.
 
 ---
 
-# 4. Technology Stack
+# 4. Development Workflow
+
+Git should be used with a professional branch-based workflow.
+
+## 4.1 Branch Philosophy
+
+`main` should always represent an integrated, reasonably stable version of the project.
+
+Direct development on `main` should generally be avoided.
+
+Development should happen through feature or maintenance branches.
+
+## 4.2 Branch Naming
+
+Use descriptive prefixes:
+
+```text
+feature/
+fix/
+refactor/
+chore/
+docs/
+```
+
+Examples:
+
+```text
+feature/component-system
+feature/spotify-dashboard
+feature/league-dashboard
+feature/library
+fix/mobile-navbar
+refactor/project-card
+chore/update-dependencies
+docs/update-blueprint
+```
+
+## 4.3 Standard Workflow
+
+```text
+main
+ ↓
+create branch
+ ↓
+develop
+ ↓
+test
+ ↓
+commit
+ ↓
+push branch
+ ↓
+open Pull Request
+ ↓
+review / inspect
+ ↓
+merge into main
+ ↓
+pull updated main
+ ↓
+delete feature branch
+```
+
+Typical workflow:
+
+```bash
+git switch main
+git pull origin main
+git switch -c feature/example
+```
+
+After development:
+
+```bash
+git status
+git add .
+git commit -m "Implement example feature"
+git push -u origin feature/example
+```
+
+After the GitHub Pull Request is merged:
+
+```bash
+git switch main
+git pull origin main
+git branch -d feature/example
+```
+
+## 4.4 Commit Guidelines
+
+Commits should describe the actual change.
+
+Examples:
+
+```text
+Create initial home page
+Add reusable project card component
+Refine portfolio typography
+Implement Spotify API integration
+Add League match history
+Create library database schema
+Fix mobile navigation overflow
+```
+
+Avoid vague commits such as:
+
+```text
+update
+changes
+stuff
+final
+working
+```
+
+## 4.5 Pull Requests
+
+Pull Requests should briefly explain:
+
+* What changed
+* Why it changed
+* What was tested
+* Any known limitations
+
+Example:
+
+```text
+## Summary
+
+- Added reusable portfolio component system
+- Refined Button, Badge, SectionHeading, and ProjectCard
+- Added component development sheet
+
+## Testing
+
+- Production build passes
+- Checked desktop layout
+- Checked mobile layout
+- Checked for horizontal overflow
+```
+
+---
+
+# 5. Design Direction
+
+The visual identity should be:
+
+* Clean
+* Technical
+* Editorial
+* Modern
+* Slightly experimental
+* Typography-driven
+* Structured
+* Intentional
+
+The site should feel like a carefully designed engineering portfolio rather than a generic developer template.
+
+## Avoid
+
+* Neon gradients
+* Excessive glow effects
+* Generic AI imagery
+* Stock illustrations
+* Excessive glassmorphism
+* Constant animations
+* Excessive rounded cards
+* Generic corporate layouts
+* Overly decorative dashboards
+* Excessive visual noise
+
+## Prefer
+
+* Strong typography
+* Large editorial headings
+* Generous whitespace
+* Thin borders
+* Restrained colors
+* Clear hierarchy
+* Technical metadata
+* Asymmetric layouts where appropriate
+* Subtle interaction
+* Data visualization where meaningful
+* Intentional motion
+
+---
+
+# 6. Typography
+
+## Primary Font
+
+**Satoshi**
+
+Characteristics:
+
+* Sleek
+* Distinctive
+* Modern
+* Professional
+* Strong display typography
+
+## Alternatives
+
+* Instrument Sans
+* Geist
+* Space Grotesk
+* Manrope
+
+Typography should provide much of the visual personality of the site.
+
+Avoid relying on excessive visual effects to create personality.
+
+---
+
+# 7. Color System
+
+The initial palette should remain restrained.
+
+Suggested foundation:
+
+```css
+--background: #f7f7f5;
+--foreground: #171717;
+--muted: #6b6b67;
+--border: #deded8;
+--surface: #ffffff;
+--accent: #1f4fff;
+```
+
+The accent color should be used intentionally rather than everywhere.
+
+Potential future dark mode can be introduced after the primary light theme is stable.
+
+---
+
+# 8. Spacing & Layout
+
+The site should use a consistent spacing system.
+
+Priorities:
+
+* Large section spacing
+* Comfortable text widths
+* Strong alignment
+* Consistent horizontal padding
+* Responsive container widths
+* Clear visual rhythm
+
+The primary content container should use a maximum width around:
+
+```text
+max-w-7xl
+```
+
+with responsive horizontal padding.
+
+---
+
+# 9. Technology Stack
 
 ## Frontend
 
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
 
 ## Hosting
 
-- Hostinger
+* Hostinger
+
+## Version Control
+
+* Git
+* GitHub
 
 ## Development
 
-- Git
-- GitHub
-- VS Code
+* VS Code
 
-## Backend / Server Features
+## Potential Backend / Server Features
 
-Next.js server-side functionality should be used where appropriate for:
+Next.js server-side functionality should be used for:
 
-- API integrations
-- Secret/API-key protection
-- OAuth flows
-- Data aggregation
-- Database operations
-- Server-side caching
-
-API credentials must never be exposed directly in client-side code.
-
-## Database
-
-Initial recommendation:
-
-- PostgreSQL
-
-Potential hosted options:
-
-- Supabase
-- Neon
-- Hostinger-supported database
-
-The database should only be introduced when functionality requires persistent data.
+* API integrations
+* API-key protection
+* OAuth
+* External API aggregation
+* Database operations
+* Caching
+* Authentication
+* Server actions
 
 ---
 
-# 5. Site Architecture
+# 10. Database Strategy
 
-## Public Pages
+A database should only be introduced when functionality actually requires persistence.
 
+Potential database options:
+
+* PostgreSQL
+* Supabase
+* Neon
+* Hostinger PostgreSQL/database infrastructure
+
+The database should not be added merely because the portfolio is capable of using one.
+
+Initial professional portfolio pages can remain static.
+
+The interactive personal systems will eventually justify database functionality.
+
+---
+
+# 11. Site Architecture
+
+## Public Professional Pages
+
+```text
 /
+ /about
+ /projects
+ /projects/[slug]
+ /experience
+ /skills
+ /achievements
+ /contact
+```
 
-Home / Landing Page
+## Personal Application Pages
 
-/about
-
-About / Profile
-
-/projects
-
-Project Portfolio
-
-/projects/[slug]
-
-Individual Project Case Study
-
-/experience
-
-Professional Experience
-
-/skills
-
-Skills / Technologies
-
-/achievements
-
-Achievements / Certifications
-
-/contact
-
-Contact
-
-## Personal / Functional Pages
-
+```text
 /music
-
-Spotify / Music Dashboard
-
 /league
-
-League of Legends Dashboard
-
 /library
-
-Personal Book Library
-
 /library/[slug]
+```
 
-Individual Book Page
+## Future Pages
 
-## Optional Future Pages
-
+```text
 /now
-
-Current activity / "Now" page
-
 /notes
-
-Personal technical notes
-
 /lab
-
-Experimental projects
+```
 
 ---
 
-# 6. Homepage
+# 12. Homepage
 
-The homepage should immediately establish professional identity.
+The homepage is the primary entry point.
+
+It should establish Yuri's professional identity immediately.
+
+## Homepage Structure
+
+```text
+Hero
+↓
+Selected Projects
+↓
+Experience
+↓
+Skills
+↓
+Profile / Leadership
+↓
+Personal Interests Preview
+↓
+Contact / Closing Section
+```
 
 ## Hero
 
-Content:
+The hero should communicate:
 
-- Name
-- Professional identity
-- Short positioning statement
-- Primary CTA
-- Secondary CTA
+* Name
+* Engineering identity
+* Short professional statement
+* Primary call-to-action
+* Secondary navigation/action
 
-Example direction:
+The engineering identity should be immediately obvious.
 
-> Yuri Morrison  
-> Software / AI Engineer
+Example positioning:
 
-Supporting copy should communicate that Yuri builds software and intelligent systems while bringing experience in coordination and leadership.
+> Software / AI Engineer building practical systems across software, data, and intelligent applications.
 
-Possible CTAs:
+The final wording can be refined later.
 
-- View Projects
-- About Me
-- Contact
-- Resume
+---
 
-## Selected Projects
+# 13. Selected Projects
 
-Feature major projects.
+The homepage should prioritize substantial engineering work.
 
 Primary project:
 
 ### Waste-To-Worth
 
-AI-powered recycling and upcycling application using image recognition, retrieval, and personalized recommendations.
+The flagship AI engineering project.
 
-Secondary projects:
+Secondary project:
 
-- Software Engineering Internship
-- Other technical projects
-- Relevant academic / engineering work
+### Software Engineering Internship
 
-## Experience Preview
+Professional engineering experience presented as a case study.
 
-Show key professional experience.
+Additional projects may include:
 
-## Skills Preview
+* Real-Time Web-Based Basketball Management System
+* Organizational Task Management Web System
+* Other technically meaningful projects
 
-Group technologies into meaningful categories instead of displaying a giant list.
+Project cards should emphasize:
 
-Example:
-
-### Programming
-
-- Python
-- Java
-- JavaScript
-- TypeScript
-- SQL
-
-### Frontend
-
-- React
-- React Native
-- Angular
-- HTML/CSS
-- Tailwind
-
-### Backend
-
-- Flask
-- Node.js
-- Firebase
-- REST APIs
-
-### Cloud / Infrastructure
-
-- AWS
-- Docker
-- Cloud deployment
-
-### AI
-
-- AI agents
-- RAG
-- LLM APIs
-- Image recognition
-
-### Project / Collaboration
-
-- Jira
-- Confluence
-- Agile
-- Project coordination
-
-## Personal Interests Preview
-
-A small section linking to:
-
-- Music
-- League of Legends
-- Books
-
-This should make the site feel personal without distracting from the professional portfolio.
+* Project title
+* Short description
+* Technologies
+* Project category
+* Case study link
+* Featured status where appropriate
 
 ---
 
-# 7. About Page
+# 14. Project Case Studies
 
-## Purpose
+Every major project should have a dedicated case study.
 
-Provide a deeper explanation of Yuri's background, interests, values, and career direction.
+## Case Study Structure
 
-Sections:
+```text
+Overview
+Problem
+Goal
+Role
+Architecture
+Technology
+Engineering Decisions
+Challenges
+Solutions
+Results
+Lessons Learned
+Future Improvements
+```
 
-### Introduction
+The case study should focus on engineering decisions rather than simply listing features.
 
-Who Yuri is and what he builds.
+Where possible, include:
 
-### Engineering
-
-Interest in:
-
-- Software development
-- AI engineering
-- Intelligent systems
-- Product development
-- Technical problem solving
-
-### Leadership
-
-Experience leading teams, coordinating projects, delegating work, and facilitating collaboration.
-
-### Editorial / Communication
-
-Experience with writing, editorial work, web management, and communicating technical or organizational ideas.
-
-### Career Direction
-
-Primary goal:
-
-Build a career as an AI / Software Engineer.
-
-Project management and coordination should be presented as complementary skills rather than the primary career identity.
+* Architecture diagrams
+* Screenshots
+* Data
+* Metrics
+* Technical constraints
+* Trade-offs
+* Implementation details
 
 ---
 
-# 8. Projects
-
-Projects are the centerpiece of the portfolio.
-
-Each major project should be presented as a case study rather than a simple card.
-
-## Project Card
-
-Each card may contain:
-
-- Title
-- Short description
-- Technologies
-- Category
-- Featured status
-- Image
-- Link to case study
-
-## Project Case Study Structure
-
-### Overview
-
-What the project is.
-
-### Problem
-
-What problem it addresses.
-
-### Goal
-
-What the project attempted to accomplish.
-
-### Role
-
-What Yuri personally contributed.
-
-### Architecture
-
-Technical architecture and system components.
-
-### Technologies
-
-Relevant technologies.
-
-### Engineering Decisions
-
-Important technical decisions and why they were made.
-
-### Challenges
-
-Problems encountered during development.
-
-### Solutions
-
-How those problems were addressed.
-
-### Results
-
-Quantitative and qualitative results.
-
-### Lessons
-
-What was learned.
-
-### Future Improvements
-
-What could be improved with additional development time.
-
----
-
-# 9. Featured Project — Waste-To-Worth
+# 15. Waste-To-Worth
 
 ## Title
 
-Waste-To-Worth: Environmentally Transformative Use of Image Recognition and Artificial Intelligence
+**Waste-To-Worth: Environmentally Transformative Use of Image Recognition and Artificial Intelligence**
 
 ## Role
 
@@ -445,735 +554,1630 @@ Principal Researcher / Developer
 
 ## Description
 
-An AI-powered recycling and upcycling application designed to help users identify materials and discover personalized ways to reuse or properly dispose of them.
+An AI-powered recycling and upcycling application designed to help users identify recyclable materials and discover practical ways to reuse or dispose of them.
 
-## Core Features
+## Technology
 
-- Image recognition
-- Material classification
-- Retrieval-based recommendation system
-- AI-generated recycling/upcycling records
-- Climate-aware disposal recommendations
-- Geolocation
-- Quest / project progression
-- Gamification
-- User-generated content
+* React Native
+* Expo
+* Flask
+* Python
+* Firebase Authentication
+* Firebase Firestore
+* Image Recognition
+* LLM
+* Retrieval-Augmented Generation
+* Geolocation
+* Gamification
 
 ## Architecture
 
-Frontend:
+```text
+User
+ ↓
+React Native / Expo
+ ↓
+Flask Backend
+ ↓
+Image Recognition
+ ↓
+Material Identification
+ ↓
+Firestore / Existing Records
+ ↓
+Retrieval
+ ↓
+LLM Generation
+ ↓
+Personalized Recycling / Upcycling Recommendation
+```
 
-- React Native
-- Expo
+The system retrieves relevant existing recycling/upcycling records before generating new recommendations to reduce duplication.
 
-Backend:
+## Features
 
-- Flask
+* Image-based material recognition
+* Recycling guidance
+* Upcycling recommendations
+* Climate-specific disposal instructions
+* Geolocation
+* Gamification
+* User projects
+* Community posts
+* AI-generated recommendations
 
-Database:
+## Pilot Results
 
-- Firebase Firestore
+The pilot evaluation included:
 
-Authentication:
+* 36 users
+* 136 scans
+* 117 successful classifications
+* Approximately 86% classification rate in the recorded pilot results
+* 53 completed projects
+* 83 of 100 materials with climate-specific disposal methods
 
-- Firebase Authentication
+The portfolio should preserve the actual methodology behind each metric rather than presenting numbers without context.
 
-AI:
+## Recognition
 
-- Image recognition
-- Retrieval
-- LLM-based generation
-
-## Results
-
-Include validated project results such as:
-
-- 36 users
-- 136 scans
-- 117 / 136 successful classifications
-- 86.0% classification rate
-- 53 completed projects
-- 83 / 100 climate-specific disposal methods
-
-The case study should explain what these numbers mean rather than simply displaying them.
+**3rd Best Capstone Project — Department Level**
 
 ---
 
-# 10. Professional Experience
+# 16. Software Engineering Internship
 
-## Software Engineering Internship
+## Role
+
+Software Engineering Intern
+
+## Company
 
 Electronic Science Corporation
 
-Present the internship as an engineering case study.
+## Focus
 
-Areas:
+Professional software engineering involving:
 
-- Software development
-- Debugging
-- Cloud deployment
-- Data processing
-- UI/UX
-- Feature development
-- Technical reporting
+* Frontend development
+* Backend development
+* API integration
+* Debugging
+* Cloud services
+* Data processing
+* UI/UX
+* QA preparation
 
-Technologies:
+## Technology
 
-- AWS ECS
-- AWS Lambda
-- AWS S3
-- AWS Cognito
-- JavaScript
-- Excel
+* JavaScript
+* Angular
+* AWS ECS
+* AWS Lambda
+* Amazon S3
+* Amazon Cognito
+* Git
+* Postman
+* Jira
+* Confluence
+* Agile workflow
 
-Highlight measurable impact.
+## Key Engineering Achievement
 
-Example:
+An asynchronous bulk-data processing workflow reduced system runtime to approximately **20% of the original runtime**, representing an approximately **80% reduction in processing time**.
 
-> Reduced the runtime of a time-consuming bulk-data process to approximately 20% of its original runtime.
+The case study should explain:
 
-This represents approximately an 80% reduction in processing time.
+```text
+Problem
+↓
+Existing workflow
+↓
+Bottleneck
+↓
+Engineering approach
+↓
+AWS architecture
+↓
+Implementation
+↓
+Performance improvement
+```
 
-Also mention:
+Confidential company information should not be disclosed.
 
-- Best Intern recognition
-- Invitation to apply for a software engineering opening
+## Recognition
 
-Confidential information should not be disclosed.
+**Best Intern — Student Internship Program**
 
----
-
-# 11. Leadership
-
-Leadership should support the engineering narrative rather than replace it.
-
-Relevant experience:
-
-- BITS President
-- Internal Vice President
-- Associate External Vice President
-- Event coordination
-- Officer management
-- Industry seminar coordination
-- Stakeholder communication
-- Delegation
-- Project planning
-
-## Example Case Study
-
-### NOSEDIVE
-
-A recurring industry seminar series connecting students with professionals and practical industry knowledge.
-
-Show:
-
-- Objective
-- Team structure
-- Responsibilities
-- Planning
-- Coordination
-- Stakeholders
-- Execution
-- Improvements across iterations
+The user was also invited to apply for a software engineering opening following the internship.
 
 ---
 
-# 12. Music Page
+# 17. Experience
+
+The Experience page should provide a more complete timeline than the homepage.
+
+Potential categories:
+
+## Professional
+
+* Software Engineering Intern
+* Electronic Science Corporation
+
+## Leadership
+
+* Bedan Information Technology Society
+
+## Editorial / Technical Communication
+
+* The Bedan Herald
+
+Experience should emphasize transferable engineering capabilities:
+
+* Technical execution
+* Systems thinking
+* Coordination
+* Stakeholder management
+* Communication
+* Leadership
+* Problem-solving
+
+---
+
+# 18. Leadership
+
+Leadership should support the engineering narrative.
+
+## Bedan Information Technology Society
+
+Roles:
+
+```text
+Associate External Vice President — 2022–2023
+Internal Vice President — 2023–2024
+President — 2024–2025
+Internal Vice President — 2025–2026
+```
+
+The organization involved approximately:
+
+* 150 members
+* 20+ officers/staff
+
+Relevant responsibilities include:
+
+* Cross-functional coordination
+* Delegation
+* Project planning
+* Event execution
+* Stakeholder management
+* External partnerships
+* Sponsorship
+* Budget management
+* Mentorship
+* Technical event support
+
+## NOSEDIVE
+
+NOSEDIVE should be presented as a project/case study where useful.
+
+It is a recurring seminar initiative involving industry professionals and technical practices.
+
+The portfolio can highlight:
+
+* Initiative development
+* Coordination
+* Industry engagement
+* Event execution
+* Delegation
+* Continuity between officer teams
+
+Leadership should demonstrate the ability to move people and projects toward outcomes.
+
+---
+
+# 19. Editorial / Communication Experience
+
+The Bedan Herald provides supporting evidence of:
+
+* Technical communication
+* Writing
+* Research
+* Editing
+* Digital publishing
+* UI/UX
+* Website administration
+* Content management
+
+Relevant experience includes:
+
+* Senior Staff
+* Web Manager
+* Circulations Manager
+* Research and Circulations Staff
+
+The Web Manager role is especially relevant because it combines technical implementation with content and user experience.
+
+---
+
+# 20. Skills
+
+Skills should be grouped rather than presented as an enormous keyword wall.
+
+## Languages
+
+* Python
+* Java
+* JavaScript
+* PHP
+* HTML
+* CSS
+* SQL
+
+## Frameworks
+
+* React
+* React Native
+* Angular
+* Node.js
+* Flask
+* Tailwind CSS
+* Next.js
+
+## Databases
+
+* Firebase Firestore
+* MySQL
+* MariaDB
+* SQL / NoSQL concepts
+
+## Cloud / Infrastructure
+
+* AWS ECS
+* AWS Lambda
+* Amazon S3
+* Amazon Cognito
+* Docker
+* Hostinger
+
+## AI / Data
+
+* AI Agents
+* LLM APIs
+* RAG
+* Image Recognition
+* API Integration
+* Data Processing
+
+## Tools
+
+* Git
+* GitHub
+* Postman
+* Jira
+* Confluence
+* VS Code
+* MySQL Workbench
+
+## Engineering Practices
+
+* Agile
+* Full-Stack Development
+* API Integration
+* Responsive Web Development
+* UI/UX Implementation
+* Software Testing
+* Debugging
+* Database Design
+* System Integration
+* Requirements Analysis
+
+---
+
+# 21. Achievements & Certifications
+
+Potential highlights:
+
+* Best Intern — Student Internship Program
+* 3rd Best Capstone Project — Department Level
+* Dean's Lister / Annual Honor Roll
+* TOPCIT Level 4 — 830/1000
+* PMI Project Management Ready
+* Microsoft 365 Fundamentals
+* Azure Fundamentals
+* Certiport IT Specialist certifications
+* CompTIA IT Fundamentals
+
+The page should distinguish:
+
+```text
+Awards
+Certifications
+Academic Recognition
+Competition Results
+```
+
+rather than mixing everything together.
+
+---
+
+# 22. Contact
+
+The Contact page should provide an actual contact method.
+
+Potential functionality:
+
+* Email
+* LinkedIn
+* GitHub
+* Contact form
+
+If a contact form is implemented:
+
+```text
+Visitor
+ ↓
+Next.js server
+ ↓
+Validation
+ ↓
+Email provider
+ ↓
+Yuri
+```
+
+Secrets and email-provider credentials must remain server-side.
+
+The current homepage contact CTA should eventually point to a real contact method rather than simply returning visitors to selected work.
+
+---
+
+# 23. Personal Dashboard
+
+The personal portion of the website should function as a collection of small engineering applications.
+
+The professional portfolio remains the primary hierarchy.
+
+Personal pages should demonstrate:
+
+* API integration
+* Authentication
+* Data visualization
+* Caching
+* Server-side architecture
+* Database design
+* Privacy
+* Error handling
+* Responsive UI
+
+---
+
+# 24. Current Project Structure
+
+The current project should evolve toward:
+
+```text
+src/
+├── app/
+│   ├── page.tsx
+│   ├── layout.tsx
+│   ├── globals.css
+│   │
+│   ├── about/
+│   │   └── page.tsx
+│   │
+│   ├── projects/
+│   │   ├── page.tsx
+│   │   └── [slug]/
+│   │       └── page.tsx
+│   │
+│   ├── experience/
+│   │   └── page.tsx
+│   │
+│   ├── skills/
+│   │   └── page.tsx
+│   │
+│   ├── achievements/
+│   │   └── page.tsx
+│   │
+│   ├── contact/
+│   │   └── page.tsx
+│   │
+│   ├── music/
+│   │   └── page.tsx
+│   │
+│   ├── league/
+│   │   └── page.tsx
+│   │
+│   ├── library/
+│   │   ├── page.tsx
+│   │   └── [slug]/
+│   │       └── page.tsx
+│   │
+│   └── components/
+│       └── page.tsx
+│
+├── components/
+│   ├── layout/
+│   │   ├── Container.tsx
+│   │   ├── Navbar.tsx
+│   │   └── Footer.tsx
+│   │
+│   ├── ui/
+│   │   ├── Button.tsx
+│   │   ├── Badge.tsx
+│   │   └── SectionHeading.tsx
+│   │
+│   ├── projects/
+│   │   └── ProjectCard.tsx
+│   │
+│   ├── music/
+│   │
+│   ├── league/
+│   │
+│   ├── library/
+│   │
+│   └── ComponentSheet.tsx
+│
+├── content/
+│   └── projects/
+│
+└── lib/
+    ├── spotify/
+    ├── riot/
+    ├── database/
+    ├── auth/
+    └── utils/
+```
+
+The actual implementation should grow incrementally rather than creating every folder immediately.
+
+---
+
+# 25. Component System
+
+Reusable components should be developed before large-scale page composition.
+
+Initial system:
+
+```text
+components/
+├── layout/
+│   ├── Container
+│   ├── Navbar
+│   └── Footer
+│
+├── ui/
+│   ├── Button
+│   ├── Badge
+│   └── SectionHeading
+│
+└── projects/
+    └── ProjectCard
+```
+
+Future components may include:
+
+```text
+ProjectMeta
+TechnologyList
+MetricCard
+Timeline
+CaseStudySection
+ImageGallery
+StatBlock
+ExternalLink
+DataTable
+EmptyState
+LoadingState
+ErrorState
+```
+
+Components should have clear responsibilities and explicit props.
+
+Avoid building components that exist only to reduce the number of lines in a page.
+
+---
+
+# 26. Component Development Strategy
+
+Component development should follow:
+
+```text
+Define responsibility
+↓
+Define props/API
+↓
+Define design tokens
+↓
+Implement structure
+↓
+Style
+↓
+Test in Component Sheet
+↓
+Use in actual page
+↓
+Refine based on real content
+```
+
+The component sheet acts as a development sandbox.
+
+Current route:
+
+```text
+/components
+```
+
+It should remain development-oriented and does not necessarily need to be publicly linked from the primary navigation.
+
+---
+
+# 27. Component Sheet
+
+The component sheet should demonstrate:
+
+* Navigation
+* Buttons
+* Badges
+* Section headings
+* Project cards
+* Future reusable UI components
+
+Example content:
+
+```text
+Component Sheet
+│
+├── Buttons
+├── Badges
+├── Section Heading
+├── Project Cards
+└── Future Components
+```
+
+The component sheet should be used to validate consistency before components are deployed throughout the site.
+
+---
+
+# 28. Music Dashboard
 
 Route:
 
+```text
 /music
+```
 
-Purpose:
-
-Create a personal Spotify-powered dashboard.
-
-The page should demonstrate:
-
-- OAuth
-- API integration
-- Server-side data fetching
-- Data visualization
-- Caching
-- API security
-
-## Spotify Features
-
-### Top Tracks
-
-Display top tracks.
-
-Possible time ranges:
-
-- Short term
-- Medium term
-- Long term
-
-Spotify's Web API provides a user's top tracks and artists through the `GET /me/top/{type}` endpoint, with short-, medium-, and long-term ranges. :contentReference[oaicite:2]{index=2}
-
-### Top Artists
-
-Display top artists alongside top tracks.
-
-### Recently Played
-
-Display recent listening history.
-
-Spotify provides a recently played endpoint using the `user-read-recently-played` scope. The endpoint can return up to 50 recently played tracks. :contentReference[oaicite:3]{index=3}
-
-Potential display:
-
-- Track
-- Artist
-- Album artwork
-- Time played
-- Spotify link
-
-### Currently Playing
-
-Optional feature.
-
-Display:
-
-- Current track
-- Artist
-- Album
-- Playback status
-
-Spotify provides a currently-playing endpoint using `user-read-currently-playing`. :contentReference[oaicite:4]{index=4}
+The music page should use Spotify's API.
 
 ## Authentication
 
-Use Spotify OAuth.
+Spotify OAuth.
 
-Required scopes may include:
+Potential scopes:
 
-- user-top-read
-- user-read-recently-played
-- user-read-currently-playing
+```text
+user-top-read
+user-read-recently-played
+user-read-currently-playing
+```
 
-Spotify uses OAuth 2.0 for access to user-specific data. :contentReference[oaicite:5]{index=5}
+## Dashboard Features
 
-## Important Constraints
+* Top tracks
+* Top artists
+* Recently played
+* Currently playing
+* Time-range comparisons
+* Listening statistics
 
-Spotify API credentials must remain server-side.
+Possible future additions:
 
-Spotify content should be properly attributed and linked back to Spotify.
+* Listening trends
+* Artist frequency
+* Genre analysis
+* Temporal visualizations
 
-Do not download or redistribute Spotify content.
+## Architecture
 
-Do not use Spotify content as training data for AI systems.
+```text
+Browser
+ ↓
+Next.js Server
+ ↓
+Spotify OAuth/API
+ ↓
+Normalized Data
+ ↓
+Browser
+```
 
-Spotify's platform policies impose restrictions on content use, attribution, and synchronization. :contentReference[oaicite:6]{index=6}
+Spotify credentials must remain server-side.
+
+Never expose:
+
+```text
+SPOTIFY_CLIENT_SECRET
+```
+
+to the browser.
+
+## Privacy
+
+Listening history is personal data.
+
+The page should only expose information intentionally shared by Yuri.
+
+Spotify attribution and appropriate external links should be included where required.
 
 ---
 
-# 13. League of Legends Page
+# 29. League Dashboard
 
 Route:
 
+```text
 /league
+```
 
-Purpose:
+The League dashboard should integrate with Riot's APIs.
 
-Create a personal League of Legends statistics dashboard.
+## Profile
 
-The page should demonstrate:
+Potential information:
 
-- REST API integration
-- Data aggregation
-- Match-history processing
-- Data visualization
-- Caching
-- API security
-- Handling external API rate limits
+* Riot ID
+* Region
+* Summoner level
+* Profile icon
+* Rank
 
-## Player Profile
+## Statistics
 
-Display:
+Potential information:
 
-- Riot ID
-- Region
-- Summoner level
-- Profile icon
-- Ranked status
-- Current rank
-
-Use Riot ID rather than relying on legacy summoner-name workflows.
-
-Riot recommends using Riot IDs and PUUIDs for player identification and has deprecated the old player-facing summoner-name lookup approach. :contentReference[oaicite:7]{index=7}
-
-## Player Statistics
-
-Potential statistics:
-
-- Recent games
-- Wins
-- Losses
-- Win rate
-- KDA
-- Most-played champions
-- Champion win rate
-- Average KDA
-- CS
-- Vision score
-- Damage
-- Game duration
-- Queue type
+* Recent games
+* Win rate
+* KDA
+* Champions played
+* CS
+* Vision
+* Damage
+* Game duration
+* Queue type
 
 ## Recent Matches
 
-Display:
+Display recent matches with:
 
-- Champion
-- Result
-- KDA
-- Duration
-- Queue
-- Date
-- Items
-- Summoner spells
+* Champion
+* Result
+* KDA
+* Duration
+* Queue
+* Date
 
 ## Recently Played With
 
-Analyze recent match participants to determine:
+This can be derived from match participant data.
 
-- Players encountered repeatedly
-- Number of games together
-- Win/loss record together
-- Most recent game together
+## Riot APIs / Data
 
-This should be presented as derived match-history data rather than implying that Riot provides a direct "friends/recent players" endpoint.
+Potentially use:
 
-## API Architecture
+* Account
+* Summoner
+* Match
+* League
+* Champion Mastery
+* Data Dragon
 
-Likely Riot API components:
+## Architecture
 
-- Account API
-- Summoner API
-- Match API
-- League API
-- Champion Mastery API
-- Data Dragon
+```text
+Browser
+ ↓
+Next.js Server
+ ↓
+Riot API
+ ↓
+Aggregation / Normalization
+ ↓
+Cache
+ ↓
+Browser
+```
 
-Riot's current developer portal lists Account, Summoner, Match-v5, League, Champion Mastery, and other League APIs. :contentReference[oaicite:8]{index=8}
+The Riot API key must remain server-side.
 
-Data Dragon can provide static League assets such as:
+Caching should be used to reduce unnecessary API calls and respect rate limits.
 
-- Champions
-- Items
-- Runes
-- Summoner spells
-- Profile icons
-
-:contentReference[oaicite:9]{index=9}
-
-## API Key Security
-
-Riot API keys must not be exposed in client-side code.
-
-API requests should go through server-side functionality.
-
-Implement caching to reduce unnecessary API requests.
-
-Respect Riot API rate limits.
-
-Riot's documented personal API-key rate limit is currently 20 requests per second and 100 requests per two minutes, per region. :contentReference[oaicite:10]{index=10}
-
-## Riot Compliance
-
-The page should include the required Riot Games disclaimer:
-
-> [Product Name] is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties.
-
-Riot's developer policy also requires registered products to follow current Riot policies. :contentReference[oaicite:11]{index=11}
+The dashboard should include the required Riot disclaimer.
 
 ---
 
-# 14. Book Library
+# 30. Book Library
 
-Route:
+Routes:
 
+```text
 /library
-
-Purpose:
-
-Create a personal digital catalog of Yuri's physical and/or owned books.
-
-Unlike the Spotify and League pages, the library should use a database controlled by the portfolio.
-
-## Book Information
-
-Each book can contain:
-
-- Title
-- Author
-- ISBN
-- Cover
-- Publisher
-- Publication year
-- Genre
-- Tags
-- Description
-- Date acquired
-- Ownership status
-- Location
-- Reading status
-- Rating
-- Personal review
-- Notes
-- Recommended-by
-- Loan status
-
-## Reading Status
-
-Possible statuses:
-
-- Want to Read
-- Reading
-- Completed
-- Abandoned
-- Re-reading
-
-## Book Page
-
 /library/[slug]
+```
 
-Display:
+The library should function as a personal book catalog.
 
-- Cover
-- Title
-- Author
-- Metadata
-- Personal rating
-- Review
-- Notes
-- Reading status
-- Availability
-- Loan information
-- Related recommendations
-
----
-
-# 15. Book Review System
-
-Users should be able to leave reviews for books.
+## Book Fields
 
 Potential fields:
 
-- Rating
-- Written review
-- Spoiler flag
-- Date
-- Reviewer
+```text
+id
+title
+author
+isbn
+coverUrl
+publisher
+publicationYear
+genre
+tags
+description
+acquiredAt
+ownershipStatus
+location
+readingStatus
+createdAt
+updatedAt
+```
 
-Initially this can be limited to authenticated users.
+## Reading Status
 
-## Rating
+```text
+Want to Read
+Reading
+Completed
+Abandoned
+Re-reading
+```
 
-Use a 1–5 rating system.
+## Additional Information
 
-Avoid presenting average ratings as authoritative assessments.
+Books may eventually contain:
 
-Reviews should remain individual opinions.
-
----
-
-# 16. Book Recommendation System
-
-Users should be able to recommend books to Yuri.
-
-Recommendation fields:
-
-- Book
-- Recommended by
-- Reason
-- Date
-- Status
-
-Recommendation statuses:
-
-- Suggested
-- Considering
-- Added
-- Reading
-- Completed
-- Declined
-
-Optional future feature:
-
-Personal recommendation algorithm based on:
-
-- Genres
-- Tags
-- Authors
-- Previous ratings
-- Reading history
-
-Do not implement recommendation AI until the basic library functionality is stable.
+* Recommendations
+* Reviews
+* Loan status
+* Notes
+* Reading history
+* Related books
 
 ---
 
-# 17. Book Loaning System
+# 31. Book Database Model
 
-The library should support lending physical books.
+The `Book` entity should not contain a single global:
 
-## Loan Record
+```text
+rating
+review
+```
 
-Fields:
+because reviews belong to users and books as a relationship.
 
-- Book
-- Borrower
-- Borrower contact
-- Date borrowed
-- Expected return date
-- Actual return date
-- Status
-- Notes
+Instead:
 
-Statuses:
-
-- Available
-- Reserved
-- On Loan
-- Returned
-- Lost
-
-## Loan Workflow
-
-1. User requests a book.
-2. Owner receives request.
-3. Owner approves or rejects request.
-4. Book becomes reserved.
-5. Book is marked as loaned.
-6. Return date is recorded.
-7. Book is returned.
-8. Loan record is closed.
-
-Initially, loaning can be manually approved.
-
-Do not allow arbitrary users to automatically mark books as loaned.
-
----
-
-# 18. Authentication
-
-Authentication becomes necessary once the site contains:
-
-- Reviews
-- Recommendations
-- Loan requests
-- Personal user interactions
-
-Possible providers:
-
-- Google
-- GitHub
-- Email/password
-
-The public portfolio itself should remain accessible without authentication.
-
----
-
-# 19. User Roles
-
-## Owner
-
-Yuri.
-
-Permissions:
-
-- Add/edit/delete books
-- Manage loans
-- Approve requests
-- Moderate reviews
-- Manage recommendations
-- Manage portfolio content
-- Manage integrations
-
-## Visitor
-
-Permissions:
-
-- View portfolio
-- View public library
-- View public reviews
-- Submit recommendations
-- Request loans
-- Leave reviews if authentication is enabled
-
-## Future
-
-Optional administrator/moderator role.
-
----
-
-# 20. Database Concept
-
-Initial database entities:
-
-## User
-
-- id
-- name
-- email
-- avatar
-- role
-- createdAt
+```text
+Book
+ └── Reviews
+```
 
 ## Book
 
-- id
-- title
-- author
-- isbn
-- coverUrl
-- description
-- publicationYear
-- genre
-- tags
-- status
-- rating
-- review
-- createdAt
-- updatedAt
+```text
+id
+title
+author
+isbn
+coverUrl
+description
+publicationYear
+genre
+tags
+readingStatus
+ownershipStatus
+location
+acquiredAt
+createdAt
+updatedAt
+```
+
+---
+
+# 32. Review System
+
+Reviews should be a separate entity.
 
 ## Review
 
-- id
-- bookId
-- userId
-- rating
-- content
-- spoiler
-- createdAt
-- updatedAt
+```text
+id
+bookId
+userId
+rating
+content
+spoiler
+createdAt
+updatedAt
+```
 
-## Recommendation
+Relationship:
 
-- id
-- bookId
-- userId
-- reason
-- status
-- createdAt
+```text
+User
+ ↓
+Review
+ ↓
+Book
+```
+
+Yuri's own review should simply be one review associated with Yuri's user account.
+
+This allows future authenticated visitors to submit their own reviews without changing the underlying book model.
+
+## Rating
+
+Rating range:
+
+```text
+1–5
+```
+
+## Spoilers
+
+Reviews should support a spoiler flag.
+
+Spoiler content can be hidden until the user explicitly reveals it.
+
+---
+
+# 33. Recommendation System
+
+Recommendations should be represented separately from books.
+
+Potential fields:
+
+```text
+id
+bookId
+recommendedById
+reason
+createdAt
+status
+```
+
+## Recommendation Status
+
+```text
+Suggested
+Considering
+Added
+Reading
+Completed
+Declined
+```
+
+Potential future functionality:
+
+* Personalized recommendations
+* Recommendation history
+* AI-assisted recommendations
+* Recommendation similarity
+
+AI recommendations should remain a later-stage feature rather than an MVP requirement.
+
+---
+
+# 34. Book Loan System
+
+Books can eventually be loaned to other authenticated users.
+
+The loan system should not duplicate borrower information inside every loan record.
+
+Instead, a loan should reference the borrower.
 
 ## Loan
 
-- id
-- bookId
-- borrowerId
-- status
-- borrowedAt
-- expectedReturnAt
-- returnedAt
-- notes
+Potential fields:
 
-## External Integration Cache
+```text
+id
+bookId
+borrowerId
+requestedAt
+approvedAt
+borrowedAt
+expectedReturnAt
+returnedAt
+notes
+```
 
-Potentially store cached API data where useful.
+The borrower should be associated with the `User` entity.
 
-Do not store external data unnecessarily.
+Avoid storing duplicated:
+
+```text
+borrowerName
+borrowerEmail
+borrowerPhone
+```
+
+inside every loan unless there is a deliberate historical-data requirement.
+
+## Loan State Flow
+
+```text
+Book
+ ↓
+Loan Request
+ ↓
+Approved
+ ↓
+Reserved
+ ↓
+On Loan
+ ↓
+Returned
+```
+
+Manual approval should be used initially.
 
 ---
 
-# 21. API / Server Architecture
+# 35. Authentication
 
-The browser should not directly communicate with APIs that require private credentials.
+Authentication is only necessary for interactive personal systems.
 
-Preferred architecture:
+Potential providers:
 
+* Google
+* GitHub
+* Email/password or magic link
+
+The professional portfolio must remain publicly accessible without authentication.
+
+## Roles
+
+Initial:
+
+```text
+Owner
+Visitor
+```
+
+Future:
+
+```text
+Moderator
+```
+
+Authentication information must remain private.
+
+---
+
+# 36. API / Server Architecture
+
+General pattern:
+
+```text
 Browser
-    ↓
+ ↓
 Next.js Server
-    ↓
-External API
-    ↓
-Normalized data
-    ↓
+ ↓
+External API / Database
+ ↓
+Normalized Data
+ ↓
 Browser
+```
 
-For Spotify:
+Server-side functionality should handle:
 
-Browser
-    ↓
-Next.js OAuth / API routes
-    ↓
-Spotify Web API
+* Secrets
+* API keys
+* OAuth
+* Database operations
+* Validation
+* Caching
+* Rate limiting
+* Data normalization
 
-For League:
-
-Browser
-    ↓
-Next.js server-side API layer
-    ↓
-Riot API
-    ↓
-Data aggregation
-    ↓
-Browser
-
-For Books:
-
-Browser
-    ↓
-Next.js server actions / API routes
-    ↓
-Database
+Client components should not directly expose private credentials.
 
 ---
 
-# 22. Caching
+# 37. API Routes
 
-External APIs should not be called on every page load.
+Potential structure:
 
-Potential cache durations:
+```text
+src/app/api/
+├── spotify/
+├── league/
+└── library/
+```
 
-Spotify:
-- Recently played: short cache
-- Top tracks: longer cache
+Potential future routes:
 
-League:
-- Profile: medium cache
-- Ranked data: medium cache
-- Match history: short/medium cache
-- Static champion data: long cache
+```text
+auth/
+contact/
+reviews/
+recommendations/
+loans/
+```
 
-Book library:
-- Database queries should be optimized normally
-- Public catalog can use application-level caching if necessary
-
-Caching strategy should be adjusted based on actual API rate limits and site traffic.
-
----
-
-# 23. Environment Variables
-
-Sensitive credentials must be stored in environment variables.
-
-Example:
-
-SPOTIFY_CLIENT_ID=
-SPOTIFY_CLIENT_SECRET=
-
-RIOT_API_KEY=
-
-DATABASE_URL=
-
-AUTH_SECRET=
-
-Additional OAuth variables may be added later.
-
-Never commit secrets to Git.
-
-Never expose server-only environment variables through `NEXT_PUBLIC_*`.
+Routes should be created only when functionality requires them.
 
 ---
 
-# 24. Component Architecture
+# 38. Caching
 
+Caching should be applied based on the nature of the data.
+
+## Spotify
+
+Recent listening:
+
+Short cache.
+
+Top tracks/artists:
+
+Longer cache.
+
+Currently playing:
+
+Very short or no cache.
+
+## League
+
+Profile/rank:
+
+Medium cache.
+
+Match history:
+
+Short/medium cache.
+
+Static game assets:
+
+Long cache.
+
+## Library
+
+Database-backed and optimized through appropriate queries.
+
+Caching should reduce unnecessary external API requests without causing visibly stale information.
+
+---
+
+# 39. Environment Variables
+
+Potential environment variables:
+
+```text
+SPOTIFY_CLIENT_ID
+SPOTIFY_CLIENT_SECRET
+RIOT_API_KEY
+DATABASE_URL
+AUTH_SECRET
+```
+
+Secrets must never be committed to Git.
+
+Never expose server-only credentials through:
+
+```text
+NEXT_PUBLIC_*
+```
+
+Use `.env.local` during development.
+
+Ensure environment files are excluded from version control.
+
+---
+
+# 40. Privacy
+
+The website may eventually process:
+
+* Spotify listening history
+* Riot IDs
+* Player names
+* Book reviews
+* Borrower information
+* Emails
+* Authentication information
+* Loan history
+
+Privacy should be treated as an engineering requirement.
+
+## Loan Privacy
+
+Loan records must not be publicly visible.
+
+## Authentication Privacy
+
+Authentication information must not be exposed.
+
+## External API Privacy
+
+Only intentionally shared data should be displayed.
+
+---
+
+# 41. Loading, Error & Empty States
+
+Every interactive system should account for:
+
+```text
+Loading
+Success
+Empty
+Error
+Stale
+Rate Limited
+Unauthorized
+```
+
+Examples:
+
+### Spotify
+
+```text
+Loading listening data...
+No recent listening data available.
+Spotify connection expired.
+```
+
+### League
+
+```text
+Loading match history...
+No recent matches found.
+Riot API temporarily unavailable.
+Rate limit reached.
+```
+
+### Library
+
+```text
+No books added yet.
+```
+
+Interactive applications should not fail silently.
+
+---
+
+# 42. Accessibility
+
+The site should support:
+
+* Semantic HTML
+* Keyboard navigation
+* Visible focus states
+* Appropriate color contrast
+* Descriptive alt text
+* Accessible buttons and links
+* Reduced-motion support
+* Logical heading hierarchy
+* Responsive text sizing
+
+Animations should never be necessary to understand content.
+
+---
+
+# 43. Responsive Design
+
+The site must be designed for:
+
+* Mobile
+* Tablet
+* Desktop
+* Large desktop
+
+Responsive behavior should be considered while components are created rather than added at the end.
+
+Important checks:
+
+* Horizontal overflow
+* Navigation wrapping
+* Card layout
+* Typography scaling
+* Image aspect ratios
+* Touch target size
+* Table/data visualization behavior
+
+---
+
+# 44. SEO
+
+The professional portfolio should include:
+
+* Page titles
+* Meta descriptions
+* Open Graph metadata
+* Semantic headings
+* Descriptive URLs
+* Appropriate structured metadata where useful
+
+Project pages should have unique metadata.
+
+The homepage should clearly communicate:
+
+```text
+Yuri Morrison
+Software / AI Engineer
+```
+
+---
+
+# 45. Performance
+
+Priorities:
+
+* Optimized images
+* Next.js image handling
+* Minimal unnecessary JavaScript
+* Server-side data fetching where appropriate
+* Caching
+* Lazy loading
+* Avoiding excessive animation
+* Avoiding unnecessary third-party dependencies
+
+The website should remain fast even as interactive features are added.
+
+---
+
+# 46. Project Content Architecture
+
+Project content should eventually be separated from page layout.
+
+Potential structure:
+
+```text
+src/content/projects/
+├── waste-to-worth.ts
+├── software-engineering.ts
+├── basketball-management.ts
+└── task-management.ts
+```
+
+This allows project pages to use shared rendering components.
+
+Potential project data:
+
+```text
+title
+slug
+description
+role
+date
+technologies
+featured
+image
+overview
+problem
+goal
+architecture
+decisions
+challenges
+solutions
+results
+lessons
+futureImprovements
+```
+
+---
+
+# 47. Homepage Content Hierarchy
+
+The order of importance should remain:
+
+```text
+1. Professional identity
+2. Engineering projects
+3. Professional experience
+4. Technical skills
+5. Leadership
+6. Personal interests
+7. Experimental features
+```
+
+The hobby systems should never make the website unclear as a professional portfolio.
+
+---
+
+# 48. Functional Hobby Pages
+
+The hobby pages exist partly because Yuri enjoys the subjects and partly because they demonstrate engineering ability.
+
+## Music
+
+Demonstrates:
+
+* OAuth
+* API integration
+* Server-side authentication
+* Data visualization
+* External API normalization
+
+## League
+
+Demonstrates:
+
+* API aggregation
+* Caching
+* Data processing
+* Statistics
+* Rate-limit handling
+
+## Library
+
+Demonstrates:
+
+* Database design
+* Authentication
+* CRUD operations
+* Relationships
+* Reviews
+* Recommendations
+* Workflow/state management
+
+Together, these systems demonstrate a wider engineering skill set than a static portfolio alone.
+
+---
+
+# 49. Scope Control
+
+Feature count should not become the goal.
+
+The project should prioritize completion and quality over the number of systems implemented.
+
+## P0 — Core Portfolio
+
+```text
+Homepage
+Projects
+Project case studies
+Experience
+About
+Skills
+Achievements
+Contact
+Responsive design
+Accessibility
+SEO
+Performance
+```
+
+## P1 — Personal Applications
+
+```text
+Spotify
+League
+Basic Library
+```
+
+## P2 — Interactive Features
+
+```text
+Reviews
+Recommendations
+Loan requests
+User accounts
+```
+
+## P3 — Experimental
+
+```text
+AI book recommendations
+Reading analytics
+Music analytics
+Gaming analytics
+Now page
+Notes
+Lab
+Interactive experiments
+```
+
+A feature should not be implemented simply because it is technically possible.
+
+---
+
+# 50. Implementation Phases
+
+## Phase 1 — Design System
+
+Current focus.
+
+Tasks:
+
+* Typography
+* Colors
+* Spacing
+* Container
+* Navbar
+* Footer
+* Buttons
+* Badges
+* Section headings
+* Cards
+* Component sheet
+* Responsive behavior
+
+The component system should be refined against the existing homepage rather than designing components in isolation.
+
+---
+
+## Phase 2 — Portfolio
+
+Build:
+
+```text
+/about
+/projects
+/projects/[slug]
+/experience
+/skills
+/achievements
+/contact
+```
+
+Complete case studies for:
+
+1. Waste-To-Worth
+2. Software Engineering Internship
+3. Additional projects as appropriate
+
+---
+
+## Phase 3 — Spotify
+
+Implement:
+
+* OAuth
+* Server-side credentials
+* Top artists
+* Top tracks
+* Recently played
+* Currently playing
+* Loading/error states
+* Caching
+* Attribution
+
+---
+
+## Phase 4 — League
+
+Implement:
+
+* Riot API integration
+* Profile
+* Rank
+* Recent matches
+* Match statistics
+* Champion information
+* Recently played with
+* Caching
+* Rate-limit handling
+* Riot disclaimer
+
+---
+
+## Phase 5 — Library
+
+Implement:
+
+* PostgreSQL/database
+* Authentication
+* Book CRUD
+* Book detail pages
+* Reading status
+* Reviews
+* Recommendations
+* Loan management
+
+Start simple.
+
+Do not build the entire social system at once.
+
+---
+
+## Phase 6 — Polish
+
+Final pass for:
+
+* Accessibility
+* SEO
+* Performance
+* Mobile behavior
+* Animations
+* Error states
+* Loading states
+* Empty states
+* Visual consistency
+* Security
+* Content quality
+
+---
+
+# 51. Current Implementation Status
+
+## 2026-10-03
+
+### Completed
+
+* Responsive homepage
+* Professional identity section
+* Project previews
+* Experience preview
+* Profile/leadership content
+* Closing section
+* Homepage visual foundation
+* Color palette
+* Responsive layout
+* Navigation
+* Footer
+* Focus styles
+* Reduced-motion support
+* Homepage metadata
+* Page title
+* Waste-To-Worth pilot results represented on homepage
+* Internship processing-time improvement represented on homepage
+* Production build
+* Scoped lint pass
+* Desktop layout checked
+* Mobile layout checked
+* Horizontal overflow checked
+* Initial reusable component system
+* Component development sheet
+
+### In Progress
+
+* Refinement of reusable design-system components
+* Component styling consistency
+* Project architecture
+
+### Still To Do
+
+* Dedicated portfolio routes
+* Full project case studies
+* Skills page
+* Achievements page
+* Experience page
+* About page
+* Contact page
+* Real contact method
+* Personal-interest previews on homepage
+* Spotify integration
+* League integration
+* Library system
+* Database
+* Authentication
+* Advanced interactive features
+* Final accessibility pass
+* Final SEO pass
+* Final performance optimization
+
+---
+
+# 52. Current Component Development
+
+Current reusable components:
+
+```text
 src/components/
-
 ├── layout/
 │   ├── Container.tsx
 │   ├── Navbar.tsx
@@ -1182,427 +2186,141 @@ src/components/
 ├── ui/
 │   ├── Button.tsx
 │   ├── Badge.tsx
-│   ├── SectionHeading.tsx
-│   └── ...
+│   └── SectionHeading.tsx
 │
 ├── projects/
-│   ├── ProjectCard.tsx
-│   └── ProjectCaseStudy.tsx
+│   └── ProjectCard.tsx
 │
-├── music/
-│   ├── SpotifyTrack.tsx
-│   ├── SpotifyArtist.tsx
-│   ├── RecentlyPlayed.tsx
-│   └── TopTracks.tsx
-│
-├── league/
-│   ├── PlayerProfile.tsx
-│   ├── MatchCard.tsx
-│   ├── ChampionStats.tsx
-│   └── RecentPlayers.tsx
-│
-└── library/
-    ├── BookCard.tsx
-    ├── BookGrid.tsx
-    ├── BookDetails.tsx
-    ├── ReviewCard.tsx
-    ├── RecommendationForm.tsx
-    └── LoanStatus.tsx
+└── ComponentSheet.tsx
+```
 
----
+Current development route:
 
-# 25. Data / Server Architecture
-
-Potential structure:
-
-src/
-├── app/
-│   ├── api/
-│   │   ├── spotify/
-│   │   ├── league/
-│   │   └── library/
-│   │
-│   ├── music/
-│   ├── league/
-│   ├── library/
-│   └── ...
-│
-├── components/
-│
-├── lib/
-│   ├── spotify/
-│   ├── riot/
-│   ├── database/
-│   ├── auth/
-│   └── utils/
-│
-└── content/
-
----
-
-# 26. Component Development Strategy
-
-Build the site incrementally.
-
-## Phase 1 — Design System
-
-Build and refine:
-
-- Typography
-- Colors
-- Spacing
-- Container
-- Navbar
-- Footer
-- Buttons
-- Badges
-- Section headings
-- Cards
-
-Use:
-
+```text
 /components
+```
 
-as the component laboratory.
-
-## Phase 2 — Portfolio
-
-Build:
-
-- Homepage
-- About
-- Projects
-- Case studies
-- Experience
-- Skills
-- Achievements
-- Contact
-
-## Phase 3 — Spotify
-
-Implement:
-
-1. Spotify developer application
-2. OAuth
-3. Server-side token handling
-4. Top tracks
-5. Top artists
-6. Recently played
-7. Optional currently playing
-8. Loading/error states
-9. Caching
-
-## Phase 4 — League
-
-Implement:
-
-1. Riot developer application
-2. Riot ID → PUUID lookup
-3. Summoner data
-4. Ranked data
-5. Match history
-6. Match participant aggregation
-7. Champion statistics
-8. Recently played-with analysis
-9. Data Dragon assets
-10. Caching
-11. Rate-limit handling
-12. Riot disclaimer
-
-## Phase 5 — Library
-
-Implement:
-
-1. Database
-2. Book schema
-3. Book catalog
-4. Book detail page
-5. Reading status
-6. Reviews
-7. Recommendations
-8. Authentication
-9. Loan management
-10. Loan requests
-
-## Phase 6 — Polish
-
-Implement:
-
-- Responsive design
-- Accessibility
-- SEO
-- Open Graph metadata
-- Loading states
-- Error states
-- Empty states
-- API failure handling
-- Animations
-- Performance optimization
-- Analytics if desired
+The component sheet should remain a controlled environment for testing the design system.
 
 ---
 
-# 27. Functional Requirements
+# 53. Immediate Development Priority
 
-Every external-data page must account for:
+The next implementation phase should focus on the component system.
 
-## Loading
+Recommended Git workflow:
 
-The user should see a meaningful loading state.
+```bash
+git switch main
+git pull origin main
+git switch -c feature/component-system
+```
 
-## Error
+Then:
 
-API failure should not break the entire page.
+1. Inspect the current homepage.
+2. Identify repeated visual patterns.
+3. Refine existing reusable components.
+4. Add missing foundational components only when needed.
+5. Test them in `/components`.
+6. Replace duplicated homepage markup with reusable components.
+7. Test desktop/mobile behavior.
+8. Run the production build.
+9. Commit the completed feature.
+10. Push the branch.
+11. Open a Pull Request.
+12. Merge into `main`.
+13. Delete the feature branch.
 
-## Empty State
-
-If no data exists, explain why.
-
-## Stale Data
-
-Show when data was last updated where relevant.
-
-## Rate Limits
-
-Avoid unnecessary API calls.
-
-## Security
-
-Never expose private API credentials.
-
-## Mobile
-
-All functionality must remain usable on mobile devices.
+The component system should serve the existing design rather than forcing the homepage to conform to an abstract component library.
 
 ---
 
-# 28. Privacy
+# 54. Engineering Principles
 
-The site should avoid exposing unnecessary personal information.
+## Build Before Decorating
 
-Particular consideration should be given to:
+Functionality and structure should come before visual polish.
 
-- Spotify listening history
-- League player names / Riot IDs
-- Book borrowers
-- User emails
-- Loan history
-- Authentication information
+## Reuse Without Over-Abstraction
 
-Loan records should not be publicly visible.
+Create reusable components when patterns genuinely repeat.
 
-User emails should never be displayed publicly.
+Do not create abstractions merely for the sake of abstraction.
 
-Personal API credentials must remain server-side.
+## Server Secrets Stay Server-Side
 
----
+API keys, OAuth secrets, and database credentials must never reach the client.
 
-# 29. SEO
+## Data Models Should Represent Relationships
 
-Every major public page should have:
+Reviews, recommendations, users, and loans should be represented as their own entities when they have independent relationships and lifecycle.
 
-- Unique title
-- Description
-- Open Graph metadata
-- Canonical URL where appropriate
+## Progressive Complexity
 
-Project pages should be optimized around the project title and technologies.
+Start with the simplest implementation that works.
 
-Personal dashboard pages may intentionally have limited indexing if they contain personal activity data.
+Add:
 
----
+* authentication
+* databases
+* caching
+* AI
+* social features
 
-# 30. Accessibility
+only when they provide a real purpose.
 
-Requirements:
+## Quality Over Feature Count
 
-- Semantic HTML
-- Keyboard navigation
-- Visible focus states
-- Appropriate color contrast
-- Alt text
-- Accessible buttons
-- Accessible forms
-- Screen-reader-friendly labels
-- Reduced-motion support
-
-Do not rely on color alone to communicate status.
+A smaller number of polished systems is better than a large number of incomplete features.
 
 ---
 
-# 31. Performance
+# 55. Portfolio Narrative
 
-Priorities:
+The portfolio should tell a coherent story:
 
-- Optimize images
-- Use Next.js Image
-- Lazy-load noncritical content
-- Cache external API data
-- Avoid unnecessary client-side JavaScript
-- Prefer Server Components where possible
-- Use Client Components only when interaction requires them
+```text
+I studied IT.
+        ↓
+I learned to build software.
+        ↓
+I built substantial systems.
+        ↓
+I worked professionally as a software engineer.
+        ↓
+I led technical and organizational projects.
+        ↓
+I became interested in AI and intelligent systems.
+        ↓
+I am continuing to build systems that combine software,
+data, APIs, and AI.
+```
 
-External APIs should not delay the initial rendering of the professional portfolio unnecessarily.
-
----
-
-# 32. Content Hierarchy
-
-Professional content should remain the primary experience.
-
-Priority:
-
-1. Engineering identity
-2. Projects
-3. Professional experience
-4. Technical skills
-5. Leadership
-6. Personal interests
-7. Interactive hobby features
-
-The hobby pages should feel like additional applications contained within the portfolio.
-
-They should not make the homepage feel like a gaming/music website.
+The website itself becomes another example of that progression.
 
 ---
 
-# 33. Portfolio Philosophy
+# 56. Final Guiding Principle
 
-The site should demonstrate the following through its implementation:
+The portfolio should not simply say:
 
-> This is not just a website describing what I can build.
+> "I know these technologies."
 
-> The website itself should demonstrate what I can build.
+It should demonstrate:
 
-The portfolio should therefore function as a technical artifact.
+> **I can use technology to understand problems, design systems, build solutions, communicate decisions, and bring projects to completion.**
 
-The Spotify integration demonstrates:
+The professional side establishes Yuri's engineering identity.
 
-- OAuth
-- External APIs
-- Data visualization
-- Server-side architecture
+The project case studies demonstrate technical depth.
 
-The League integration demonstrates:
+The experience section demonstrates professional execution.
 
-- API integration
-- Data aggregation
-- Data transformation
-- Rate-limit management
-- Statistics
+The leadership section demonstrates coordination and responsibility.
 
-The library demonstrates:
+The personal applications demonstrate practical engineering beyond coursework.
 
-- Database design
-- Authentication
-- CRUD operations
-- Relationships
-- User-generated content
-- Workflow/state management
-- Authorization
+The website itself demonstrates the ability to design and build a growing software system.
 
-The professional portfolio demonstrates:
-
-- Content architecture
-- Responsive UI
-- Case-study presentation
-- Technical communication
-
-Together, the site becomes both a portfolio and a demonstration of engineering ability.
-
----
-
-# 34. Initial MVP
-
-The first production version should NOT attempt to implement everything.
-
-MVP:
-
-### Professional
-
-- Home
-- About
-- Projects
-- Project case studies
-- Experience
-- Skills
-- Contact
-
-### Personal
-
-- Music page
-- League page
-- Basic book library
-
-No complex social functionality initially.
-
----
-
-# 35. Post-MVP
-
-After the core site is stable:
-
-### Spotify
-
-- Recently played
-- Currently playing
-- More statistics
-- Listening trends
-
-### League
-
-- Match history
-- Champion statistics
-- Recently played with
-- Performance trends
-
-### Library
-
-- Reviews
-- Recommendations
-- Authentication
-- Loaning
-- Reservation system
-
----
-
-# 36. Long-Term Possibilities
-
-Potential future functionality:
-
-- Personal "Now" page
-- Technical blog
-- Project changelogs
-- Reading statistics
-- Music statistics
-- Gaming statistics
-- Personal dashboards
-- Interactive data visualizations
-- AI-assisted book recommendations
-- AI-assisted technical project search
-
-Any AI functionality should only be added after the underlying data architecture is reliable.
-
----
-
-# 37. Guiding Principle
-
-Build the portfolio as a real product.
-
-The professional side answers:
-
-> Who is Yuri as an engineer?
-
-The project section answers:
-
-> What can Yuri build?
-
-The hobby pages answer:
-
-> What does Yuri care about?
-
-The functional systems answer:
-
-> Can Yuri actually engineer the systems behind this website?
-
-The final product should make all four answers apparent without explicitly stating them.
+The final product should feel less like a résumé placed on the web and more like a **small, evolving software product built around its creator.**

@@ -1,23 +1,11 @@
 import Link from "next/link";
+import Footer from "./components/layout/Footer";
+import Navbar from "./components/layout/Navbar";
 
 export default function Home() {
   return (
     <div className="home-page">
-      <header className="site-header">
-        <nav className="site-nav page-width" aria-label="Main navigation">
-          <Link href="#top" className="wordmark" aria-label="Yuri Morrison home">
-            YM<span>.</span>
-          </Link>
-          <div className="nav-links">
-            <Link href="#work">Work</Link>
-            <Link href="#experience">Experience</Link>
-            <Link href="#profile">Profile</Link>
-          </div>
-          <Link href="#contact" className="nav-contact">
-            Get in touch <span aria-hidden="true">↗</span>
-          </Link>
-        </nav>
-      </header>
+      <Navbar />
 
       <main id="top">
         <section className="hero page-width" aria-labelledby="hero-title">
@@ -145,11 +133,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="site-footer page-width">
-        <span>Yuri Morrison <span className="accent-period">/</span> Software & AI</span>
-        <span>Designed to be useful. © 2026</span>
-        <Link href="#top">Back to top ↑</Link>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -9,7 +9,7 @@ interface ButtonProps {
 }
 
 const buttonStyles =
-  "inline-flex items-center justify-center border border-[var(--foreground)] bg-[var(--foreground)] px-5 py-2.5 text-sm font-medium text-white transition-all hover:-translate-y-0.5 hover:bg-transparent hover:text-[var(--foreground)]";
+  "inline-flex min-h-11 items-center justify-center border border-[var(--ink)] bg-[var(--ink)] px-5 py-2.5 text-sm font-medium text-[var(--paper)] transition-all hover:-translate-y-0.5 hover:border-[var(--coral)] hover:bg-[var(--coral)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--coral)]";
 
 export default function Button({
   children,
