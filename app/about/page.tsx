@@ -49,7 +49,7 @@ export default function AboutPage() {
                 <Link href="/#work" className="button button-dark">
                   Explore selected work <span aria-hidden="true">↓</span>
                 </Link>
-                <Link href="/#contact" className="text-link">
+                <Link href="/contact" className="text-link">
                   Get in touch <span aria-hidden="true">↗</span>
                 </Link>
               </div>

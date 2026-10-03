@@ -84,7 +84,9 @@ export default function Home() {
                   <span className="metric-rule" />
                   <strong>53</strong>
                   <span>reuse projects completed<br />in the pilot</span>
-                  <Link href="#contact" aria-label="Ask about the Waste-to-Worth project">Discuss the project <span aria-hidden="true">↗</span></Link>
+                  <Link href="/projects/waste-to-worth" aria-label="Read the Waste-to-Worth case study">
+                    Read case study <span aria-hidden="true">↗</span>
+                  </Link>
                 </div>
               </article>
 
@@ -95,6 +97,9 @@ export default function Home() {
                   <h3>Electronic Science Corporation</h3>
                   <p>Engineering work across product features, data processing, debugging, and cloud deployment.</p>
                   <div className="tag-list"><span>AWS ECS</span><span>Lambda</span><span>S3</span><span>JavaScript</span></div>
+                  <Link href="/experience" className="mt-5 inline-flex text-sm font-medium underline decoration-[var(--line)] underline-offset-4 transition-colors hover:text-[var(--coral)] hover:decoration-[var(--coral)]">
+                    View experience <span aria-hidden="true" className="ml-1">↗</span>
+                  </Link>
                 </div>
                 <div className="project-metric metric-highlight">
                   <span className="metric-rule" />

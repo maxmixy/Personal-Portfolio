@@ -10,11 +10,13 @@ export default function Navbar() {
             YM<span>.</span>
           </Link>
           <div className="nav-links">
-            <Link href="/#work">Work</Link>
-            <Link href="/#experience" className="component-nav-secondary">Experience</Link>
+            <Link href="/projects">Projects</Link>
+            <Link href="/experience" className="component-nav-secondary">Experience</Link>
+            <Link href="/skills" className="component-nav-secondary">Skills</Link>
+            <Link href="/achievements" className="component-nav-secondary">Achievements</Link>
             <Link href="/about">About</Link>
           </div>
-          <Link href="/#contact" className="nav-contact">
+          <Link href="/contact" className="nav-contact">
             Get in touch <span aria-hidden="true">↗</span>
           </Link>
         </Container>

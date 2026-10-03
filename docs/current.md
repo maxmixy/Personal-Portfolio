@@ -41,7 +41,7 @@ The portfolio itself should demonstrate engineering ability rather than simply d
 
 **Phase:** Core Portfolio
 
-**Current priority:** Build the remaining professional routes on the shared design system. The next route is `/projects`.
+**Current priority:** Build the remaining professional routes on the shared design system. The next route is `/contact`.
 
 ### Current objectives
 
@@ -49,7 +49,7 @@ The portfolio itself should demonstrate engineering ability rather than simply d
 * Establish consistent design tokens.
 * Keep the visual system cohesive across future pages.
 * Test components through the component development environment.
-* Build portfolio pages incrementally, beginning with the project index and case studies.
+* Build portfolio pages incrementally, adding case studies when verified project details are available.
 * Maintain responsive behavior and accessibility.
 * Avoid premature abstraction.
 
@@ -63,7 +63,7 @@ Do not begin personal dashboard integrations or experimental functionality while
 
 ## 3. Current Implementation
 
-The homepage and `/about` route are implemented and functional.
+The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional.
 
 ### Homepage currently includes
 
@@ -71,6 +71,7 @@ The homepage and `/about` route are implemented and functional.
 * Hero section
 * Selected projects
 * Waste-To-Worth project information
+* Direct "Read case study" link from the Waste-To-Worth preview to `/projects/waste-to-worth`
 * Internship experience
 * Engineering metrics
 * Profile and leadership content
@@ -94,6 +95,64 @@ The homepage establishes the visual and structural foundation for the rest of th
 * NOSEDIVE overview
 * Route-specific metadata
 * Responsive layout using the shared site shell
+
+### Projects route currently includes
+
+* Waste-To-Worth, BasketballPage, ABC Learning Center, and Herald Admin System entries
+* GitHub links for all four project repositories
+* Technologies and descriptions limited to available repository/project evidence
+* Pilot classification and completed-project figures with context
+* Route-specific metadata and shared site shell
+* Responsive layout checked without horizontal overflow
+
+### Waste-To-Worth case study currently includes
+
+* Overview, problem, goal, role, technologies, and system flow
+* Retrieval-before-generation engineering decision
+* Pilot figures with evaluation context
+* Recognition and documented next improvements
+* Repository link and return navigation to `/projects`
+* Static generation for the known slug; unknown slugs return 404
+* Production build, lint, and mobile overflow checks
+
+### Experience route currently includes
+
+* Software engineering internship and generalized ~80% runtime reduction
+* Best Intern recognition and invitation to apply for a software engineering opening
+* Dated Bedan Information Technology Society leadership timeline
+* NOSEDIVE seminar initiative
+* Bedan Herald research, circulation, editorial, and web-management experience
+* Route-specific metadata and links from the shared navigation and homepage preview
+* Responsive layout checked without horizontal overflow
+
+### Skills route currently includes
+
+* Categories for languages, frameworks, databases, cloud, AI/data, and tools
+* Engineering practices as a separate group
+* No unsupported proficiency ratings
+* Route-specific metadata and shared navigation/footer
+* Responsive layout checked without horizontal overflow
+
+### Achievements route currently includes
+
+* All public accepted Credly badges fetched from the public wallet feed and revalidated hourly
+* Standalone Credly cards with badge image, issuer, dates, and individual verification links
+* Standalone TOPCIT Level 4 card linking to the uploaded PDF in `public/`
+* Graceful fallback link to the Credly wallet if its feed is unavailable
+* Best Intern as a professional award, with the related invitation to apply
+* 3rd Best Capstone Project Overall as a separate department-level competition result
+* Links to the Experience page and Waste-To-Worth case study
+* Route-specific metadata and shared navigation/footer
+* Responsive layout checked without horizontal overflow
+
+### Contact route currently includes
+
+* LinkedIn profile, email, and GitHub profile links
+* SMS link for the supplied phone number; no call link
+* A light note asking visitors to message rather than cold-call
+* Links to Projects and About
+* Shared navigation and homepage contact entry point route to `/contact`
+* Route-specific metadata and responsive layout checked without horizontal overflow
 
 ---
 
@@ -119,7 +178,7 @@ app/components/
 └── ComponentSheet.tsx
 ```
 
-The shared components now use the active palette tokens. The button has a visible focus treatment, project cards can omit unavailable case-study links, and shared navigation/footer components are used on the homepage, About page, and component sheet. The container uses the homepage's page-width token.
+The shared components now use the active palette tokens. The button has a visible focus treatment, project cards support optional case-study and external repository links, and shared navigation/footer components are used on the homepage, About page, and component sheet. The container uses the homepage's page-width token.
 
 ### Component development route
 
@@ -153,6 +212,18 @@ app/
 ├── globals.css
 ├── about/
 │   └── page.tsx
+├── achievements/
+│   └── page.tsx
+├── contact/
+│   └── page.tsx
+├── experience/
+│   └── page.tsx
+├── skills/
+│   └── page.tsx
+├── projects/
+│   ├── page.tsx
+│   └── [slug]/
+│       └── page.tsx
 └── components/
 	├── page.tsx
 	├── ComponentSheet.tsx
@@ -244,19 +315,14 @@ Geist and Geist Mono are loaded by `app/layout.tsx`; the global body now uses th
 
 ## 7. Planned Core Routes
 
-Implemented professional routes: `/` and `/about`.
+Implemented professional routes: `/`, `/about`, `/projects`, `/projects/waste-to-worth`, `/experience`, `/skills`, `/achievements`, and `/contact`.
+
+The dynamic `/projects/[slug]` route currently generates only the Waste-To-Worth case study. Add further slugs when their project details are verified.
 
 Remaining professional portfolio routes:
 
 ```text
-/
- /about
- /projects
- /projects/[slug]
- /experience
- /skills
- /achievements
- /contact
+None in the current core-route list.
 ```
 
 Personal/interest routes:
@@ -305,15 +371,7 @@ The shared palette alignment and reusable Container/Navbar/Footer integration on
 
 ### Priority 2 — Core Portfolio Pages
 
-The component foundation is in active use. `/about` was completed with responsive layout and route-specific metadata.
-
-Next, build:
-
-1. `/projects` and project case studies
-2. `/experience`
-3. `/skills`
-4. `/achievements`
-5. `/contact`
+The current core-route list is implemented. Continue with content refinement, then reassess priorities before starting personal applications.
 
 The order may change when dependencies make another sequence more practical.
 
