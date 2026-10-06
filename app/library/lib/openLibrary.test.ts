@@ -20,24 +20,42 @@ test("builds a bounded Open Library search request", () => {
   assert.equal(url.searchParams.get("limit"), "5");
 });
 
-test("normalizes a search result without inventing edition metadata", () => {
+test("builds an author-only request without an empty title parameter", () => {
+  const url = new URL(buildOpenLibrarySearchUrl({
+    title: undefined,
+    author: "Suzanne Collins",
+    limit: 5,
+  }));
+
+  assert.equal(url.searchParams.has("title"), false);
+  assert.equal(url.searchParams.get("author"), "Suzanne Collins");
+  assert.equal(url.searchParams.get("limit"), "5");
+});
+
+test("normalizes the real Open Library search response into a catalog model", () => {
   const result = normalizeOpenLibrarySearchResult({
-    key: "/books/OL123W",
+    key: "/works/OL123W",
     title: "The Secret History",
+    author_key: ["OL456A"],
     author_name: ["Donna Tartt"],
     first_publish_year: 1992,
     isbn_13: ["9780141185064"],
+    isbn_10: ["0141185068"],
+    language: ["eng"],
     cover_i: 100,
-    edition_id: 456,
+    lending_edition_s: "OL789M",
   });
 
   assert.deepEqual(result, {
     openLibraryWorkId: "OL123W",
-    openLibraryEditionId: "OL456M",
+    openLibraryEditionId: "OL789M",
+    openLibraryAuthorIds: ["OL456A"],
     title: "The Secret History",
     authors: ["Donna Tartt"],
     isbn13: "9780141185064",
+    isbn10: "0141185068",
     publishDate: "1992",
+    language: "eng",
     coverId: 100,
     coverUrl: "https://covers.openlibrary.org/b/id/100-M.jpg",
   });

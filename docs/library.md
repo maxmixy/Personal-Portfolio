@@ -6,6 +6,74 @@
 
 ---
 
+## 0. Database Setup Status
+
+The Library persistence layer is backed by Neon PostgreSQL 18.6.
+
+**Local connection:** `DATABASE_URL` is loaded from the ignored local environment file. The connection is used only by the application process and is never committed.
+
+**Schema:** `public`
+
+The following tables are present and represented by the Drizzle schema:
+
+- `books`
+- `authors`
+- `book_authors`
+
+The table definitions are in [app/db/schema.ts](../app/db/schema.ts). The generated migration is [drizzle/0000_deep_wild_pack.sql](../drizzle/0000_deep_wild_pack.sql).
+
+The application is wired to Drizzle's Node PostgreSQL driver through `pg`. Runtime connectivity is not confirmed by the current terminal execution context, so the live database must be checked with a command that returns visible output before this status is treated as operational.
+
+The application must not rely on the external Open Library API as its source of truth for personal ownership or catalog persistence.
+
+### Current persistence boundary
+
+- **Open Library:** bibliographic metadata and candidate search results.
+- **Local database:** canonical library records, author relationships, ownership context, reading status, and personal metadata.
+- **Search response:** read-only external candidates.
+- **Imported records:** persisted locally only after explicit user selection.
+
+---
+
+## 0.1 Current Progress — 2026-10-06
+
+### Implemented
+
+- The database client now uses `pg` with Drizzle's Node PostgreSQL driver and lazy initialization through `getDatabase()`.
+- The existing `books`, `authors`, and `book_authors` schema is represented by the Drizzle schema and generated migration.
+- Catalog reads now expose database-backed book listing, lookup by Open Library key, and author-name search.
+- The Open Library search result model is normalized into a stable local record model.
+- Selected candidate imports now use a server-side POST endpoint instead of only updating client state.
+- Persistence is transactional: an existing book is reused, missing authors are created, and book-author relationships are inserted idempotently.
+- The Library page now loads persisted records, displays an empty state, and reports catalog configuration errors without crashing the route.
+- Persistence-focused model tests have been added for record transformation and required provider identity.
+- VS Code diagnostics report no errors in the modified persistence files during the latest source review.
+
+### Current verification status
+
+- Source implementation: **in progress / implemented**.
+- Editor diagnostics: **clean for the reviewed persistence files**.
+- Focused persistence tests: **tests added; terminal execution output was not returned successfully**.
+- ESLint: **terminal output unavailable; not claimed as passing**.
+- Production build: **terminal output unavailable; not claimed as passing**.
+- Live Neon connection: **not confirmed by the current terminal execution context**.
+- Live database writes: **not confirmed**.
+
+The persisted catalog should not be considered operational until a fresh database connection test returns the expected tables and a real import request completes successfully.
+
+### Remaining work
+
+1. Confirm the Neon `DATABASE_URL` and live PostgreSQL connection from a terminal that returns visible output.
+2. Run the focused persistence tests and capture their pass/fail count.
+3. Run the full lint and production build commands and capture explicit exit codes.
+4. Verify a selected import creates a book, its author, and the join row.
+5. Confirm duplicate imports remain idempotent.
+6. Replace the initial card-based catalog with the intended bookshelf experience.
+7. Implement the book detail route from persisted data.
+8. Continue with reading status, ownership, and future borrowing metadata.
+
+---
+
 ## 1. Feature Identity
 
 **Feature:** Personal Book Library
@@ -47,13 +115,18 @@ The immediate goal is to build the **core library catalog**.
 
 ### Current priority
 
-1. Establish the library data model.
-2. Implement Open Library integration.
-3. Implement bulk book addition.
-4. Store normalized book metadata locally.
-5. Build the bookshelf-style `/library` interface.
-6. Build individual book detail pages.
-7. Establish the foundation for the borrowing system without prematurely implementing unrelated social features.
+1. Confirm the Neon PostgreSQL schema and runtime connection.
+2. Establish and verify the library data model.
+3. Implement Open Library integration.
+4. Implement bulk book addition.
+5. Store normalized book metadata locally.
+6. Add database-backed catalog reads and author lookups.
+7. Verify transactional writes and duplicate handling.
+8. Build the bookshelf-style `/library` interface.
+9. Build individual book detail pages.
+10. Establish the foundation for the borrowing system without prematurely implementing unrelated social features.
+
+The persistence layer is now implemented at the source-code level. The remaining priority is live verification and connection validation before the catalog can be treated as operational.
 
 The visual centerpiece of `/library` should be a **bookshelf composed of book spines** rather than a conventional grid of book cards.
 
@@ -1080,6 +1153,8 @@ The initial library implementation is complete when:
 * No unnecessary dependencies are introduced.
 * API usage remains within Open Library's intended usage model.
 * Build and lint checks pass.
+
+The persistence source changes are implemented, but the live database and final build/lint checks remain open until the required terminal verification is completed and recorded.
 
 ---
 

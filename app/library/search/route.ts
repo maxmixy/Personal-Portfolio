@@ -7,7 +7,14 @@ export async function GET(request: Request) {
   const author = searchParams.get("author")?.trim() ?? "";
   const limit = Number.parseInt(searchParams.get("limit") ?? "5", 10);
 
-  if (title.length < 2 || title.length > 120) {
+  if (!title && !author) {
+    return NextResponse.json(
+      { error: "Enter an author or a title to search." },
+      { status: 400 },
+    );
+  }
+
+  if (title && (title.length < 2 || title.length > 120)) {
     return NextResponse.json(
       { error: "Enter a title between 2 and 120 characters." },
       { status: 400 },

@@ -4,7 +4,8 @@ import Container from "../components/layout/Container";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
 import BulkBookImport from "./components/BulkBookImport";
-import { books } from "./books";
+import { listCatalogBooks, type CatalogBook } from "./lib/catalog";
+import { getCatalogCardDisplay } from "./lib/catalog.display";
 
 export const metadata: Metadata = {
   title: "Reading Library | Yuri Morrison",
@@ -12,7 +13,17 @@ export const metadata: Metadata = {
     "A personal library catalog with Open Library metadata and local ownership context.",
 };
 
-export default function LibraryPage() {
+export default async function LibraryPage() {
+  let books: CatalogBook[];
+  let catalogError: string | null = null;
+
+  try {
+    books = await listCatalogBooks(20);
+  } catch (error) {
+    catalogError = error instanceof Error ? error.message : "The catalog is unavailable.";
+    books = [];
+  }
+
   return (
     <div className="home-page">
       <Navbar />
@@ -48,41 +59,61 @@ export default function LibraryPage() {
                 </h2>
               </div>
               <p className="text-xs text-[var(--ink-soft)]">
-                {books.length} sample titles · read-only preview
+                {books.length} persisted title{books.length === 1 ? "" : "s"} · local catalog
               </p>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2">
-              {books.map((book, index) => (
-                <article
-                  key={book.id}
-                  className="group border border-[var(--line)] bg-[var(--paper)] p-6 transition-colors hover:border-[var(--ink)] md:p-7"
-                >
-                  <div className="flex items-start justify-between gap-5">
-                    <p className="project-type">{String(index + 1).padStart(2, "0")} / {book.genre}</p>
-                    <span className="rounded-full border border-[var(--line)] px-3 py-1 text-[10px] font-medium text-[var(--ink-soft)]">
-                      {book.readingStatus}
-                    </span>
-                  </div>
-                  <h3 className="mt-7 text-2xl font-semibold tracking-tight">{book.title}</h3>
-                  <p className="mt-2 text-sm text-[var(--ink-soft)]">by {book.author}</p>
-                  <p className="mt-5 line-clamp-3 text-sm leading-6 text-[var(--ink-soft)]">
-                    {book.description}
-                  </p>
-                  <div className="mt-7 flex items-center justify-between border-t border-[var(--line)] pt-5">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.04em] text-[var(--muted)]">
-                      {book.publicationYear}
-                    </p>
-                    <Link
-                      href={`/library/${book.id}`}
-                      className="text-sm font-medium underline decoration-[var(--line)] underline-offset-4 transition-colors hover:text-[var(--coral)] hover:decoration-[var(--coral)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--coral)]"
+            {catalogError && (
+              <p role="alert" className="mb-8 border border-[var(--coral)] bg-[var(--paper-deep)] p-4 text-sm">
+                The catalog could not be loaded: {catalogError}
+              </p>
+            )}
+
+            {books.length === 0 && !catalogError ? (
+              <div className="border border-dashed border-[var(--line)] bg-[var(--paper)] p-8 text-sm text-[var(--ink-soft)]">
+                No locally persisted books yet. Search Open Library and import a selected candidate.
+              </div>
+            ) : (
+              <div className="grid gap-5 md:grid-cols-2">
+                {books.map((book, index) => {
+                  const display = getCatalogCardDisplay(book);
+
+                  return (
+                    <article
+                      key={book.id}
+                      className="group border border-[var(--line)] bg-[var(--paper)] p-6 transition-colors hover:border-[var(--ink)] md:p-7"
                     >
-                      View details <span aria-hidden="true">↗</span>
-                    </Link>
-                  </div>
-                </article>
-              ))}
-            </div>
+                      <div className="flex items-start justify-between gap-5">
+                        <p className="project-type">
+                          {String(index + 1).padStart(2, "0")} / {display.genre}
+                        </p>
+                        <span className="rounded-full border border-[var(--line)] px-3 py-1 text-[10px] font-medium text-[var(--ink-soft)]">
+                          {display.readingStatus}
+                        </span>
+                      </div>
+                      <h3 className="mt-7 text-2xl font-semibold tracking-tight">{book.title}</h3>
+                      <p className="mt-2 text-sm text-[var(--ink-soft)]">
+                        by {display.author}
+                      </p>
+                      <p className="mt-5 line-clamp-3 text-sm leading-6 text-[var(--ink-soft)]">
+                        {display.description}
+                      </p>
+                      <div className="mt-7 flex items-center justify-between border-t border-[var(--line)] pt-5">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.04em] text-[var(--muted)]">
+                          {display.publicationYear}
+                        </p>
+                        <Link
+                          href={`/library/${book.id}`}
+                          className="text-sm font-medium underline decoration-[var(--line)] underline-offset-4 transition-colors hover:text-[var(--coral)] hover:decoration-[var(--coral)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--coral)]"
+                        >
+                          View details <span aria-hidden="true">↗</span>
+                        </Link>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
           </Container>
         </section>
 

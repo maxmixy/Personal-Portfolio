@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
   getOpenLibraryResultIdentity,
-  OpenLibrarySearchResult,
+  type OpenLibrarySearchResult,
 } from "../lib/openLibrary";
 
 interface SearchResponse {
@@ -56,7 +56,9 @@ export default function BulkBookImport() {
   function toggleSelection(result: OpenLibrarySearchResult, index: number) {
     const id = getOpenLibraryResultIdentity(result, index);
     setSelectedIds((current) =>
-      current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
+      current.includes(id)
+        ? current.filter((item) => item !== id)
+        : [...current, id],
     );
   }
 
