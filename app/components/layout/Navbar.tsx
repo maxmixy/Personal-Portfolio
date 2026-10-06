@@ -14,6 +14,7 @@ export default function Navbar() {
             <Link href="/experience" className="component-nav-secondary">Experience</Link>
             <Link href="/skills" className="component-nav-secondary">Skills</Link>
             <Link href="/achievements" className="component-nav-secondary">Achievements</Link>
+            <Link href="/library" className="component-nav-secondary">Library</Link>
             <Link href="/about">About</Link>
           </div>
           <Link href="/contact" className="nav-contact">

@@ -39,31 +39,39 @@ The portfolio itself should demonstrate engineering ability rather than simply d
 
 ## 2. Current Development Phase
 
-**Phase:** Core Portfolio
+**Phase:** Personal applications / Priority 3
 
-**Current priority:** Build the remaining professional routes on the shared design system. The next route is `/contact`.
+**Current priority:** Build the read-only Library catalog and its detail pages. This is the first Priority 3 slice and does not require credentials, database persistence, authentication, reviews, recommendations, or loans.
 
 ### Current objectives
 
-* Refine reusable UI components.
-* Establish consistent design tokens.
-* Keep the visual system cohesive across future pages.
-* Test components through the component development environment.
-* Build portfolio pages incrementally, adding case studies when verified project details are available.
-* Maintain responsive behavior and accessibility.
-* Avoid premature abstraction.
+* Deliver a responsive, accessible read-only library catalog.
+* Create static detail routes for every sample book.
+* Reuse the existing portfolio shell and design tokens.
+* Keep all sample data explicitly labeled as a demonstration rather than personal ownership records.
+* Preserve the completed professional portfolio and Vercel Analytics integration.
+* Defer database, authentication, reviews, recommendations, and loan workflows until a concrete user need requires them.
 
 ### Current development principle
 
 > Quality and completion are more important than feature count.
 
-Do not begin personal dashboard integrations or experimental functionality while core portfolio functionality remains incomplete unless explicitly requested.
+The Library catalog is intentionally read-only. Spotify OAuth, Riot integration, owner-managed library workflows, reviews, recommendations, and loans are future work and are not part of this current slice.
 
 ---
 
 ## 3. Current Implementation
 
-The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional.
+The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional. Priority 3 has started with a read-only Library catalog at `/library` and static detail pages at `/library/[slug]`.
+
+### Library route currently includes
+
+* Six typed sample book records with metadata and reading status
+* Responsive catalog grid with accessible detail links
+* Static detail pages for every sample book
+* Clear page-not-found behavior for unknown slugs
+* Explicit read-only scope and no personal ownership or loan data
+* Shared navigation, footer, Container, and visual design system
 
 ### Homepage currently includes
 
@@ -178,7 +186,9 @@ app/components/
 └── ComponentSheet.tsx
 ```
 
-The shared components now use the active palette tokens. The button has a visible focus treatment, project cards support optional case-study and external repository links, and shared navigation/footer components are used on the homepage, About page, and component sheet. The container uses the homepage's page-width token.
+The shared components now use the active palette tokens. The button has a visible focus treatment, project cards support optional case-study and external repository links, and shared navigation/footer components are used throughout the core portfolio. The container uses the homepage's page-width token.
+
+The root layout also includes Vercel Analytics through `@vercel/analytics/next`. This is an active production integration, not a placeholder or an unused import.
 
 ### Component development route
 
@@ -315,9 +325,18 @@ Geist and Geist Mono are loaded by `app/layout.tsx`; the global body now uses th
 
 ## 7. Planned Core Routes
 
-Implemented professional routes: `/`, `/about`, `/projects`, `/projects/waste-to-worth`, `/experience`, `/skills`, `/achievements`, and `/contact`.
+Implemented professional routes: `/`, `/about`, `/projects`, `/projects/waste-to-worth`, `/experience`, `/skills`, `/achievements`, `/contact`, and the `/components` development sheet.
 
-The dynamic `/projects/[slug]` route currently generates only the Waste-To-Worth case study. Add further slugs when their project details are verified.
+The dynamic `/projects/[slug]` route currently generates the verified Waste-To-Worth case study. Add further slugs only when their project details are verified.
+
+Implemented Priority 3 routes:
+
+```text
+/library
+/library/[slug]
+```
+
+The Library routes are read-only catalog previews. They contain sample data and do not represent live ownership, review, recommendation, or loan records.
 
 Remaining professional portfolio routes:
 
@@ -330,8 +349,6 @@ Personal/interest routes:
 ```text
 /music
 /league
-/library
-/library/[slug]
 ```
 
 Future/experimental routes:
@@ -348,40 +365,40 @@ Do not implement future routes unless they are explicitly part of the current ta
 
 ## 8. Immediate Development Priority
 
-### Priority 1 — Component System
+### Priority 1 — Final Quality and Verification
 
-Maintain and refine as new pages expose real needs:
+The core portfolio routes are implemented. The current path is to keep the site production-ready rather than add speculative routes:
 
-* Design tokens
-* Typography
-* Buttons
-* Badges
-* Section headings
-* Cards
-* Containers
-* Navigation
-* Footer
-* Responsive behavior
-* Interactive states
-* Accessibility states
+* Run full lint and production-build validation.
+* Verify the homepage, core routes, dynamic project route, achievements, and contact page over HTTP.
+* Check responsive behavior and accessibility behavior at the relevant breakpoints.
+* Confirm the Credly and TOPCIT content provides meaningful fallback and verification behavior.
+* Review the final diff so only intended project changes remain.
 
-Use `/components` to test reusable UI.
+Use `/components` to inspect reusable UI before making any additional composition changes.
 
-The shared palette alignment and reusable Container/Navbar/Footer integration on the homepage and component sheet were completed on 2026-10-03. Navigation targets implemented sections and routes. Repository lint and production build pass; the shared shell was checked at 320px with no horizontal overflow.
+### Priority 2 — Content and Quality Refinement
 
-### Priority 2 — Core Portfolio Pages
-
-The current core-route list is implemented. Continue with content refinement, then reassess priorities before starting personal applications.
+Keep improving content only where evidence is available. Reassess personal applications only after the professional portfolio has passed its final verification.
 
 The order may change when dependencies make another sequence more practical.
 
 ### Priority 3 — Personal Applications
 
-Only after the professional portfolio foundation is sufficiently complete:
+The current slice is the read-only Library catalog:
+
+* `/library` shows the sample catalog.
+* `/library/[slug]` renders a static detail page for each listed book.
+* Sample records are typed and explicitly marked as demonstration data.
+* Database persistence, authentication, reviews, recommendations, and loans remain deferred.
+
+Next Priority 3 work after the catalog is stable:
 
 * Spotify dashboard
 * League dashboard
-* Book library
+* Owner-managed library data and authorization
+* Reviews and recommendations
+* Manual loan requests and approvals
 
 ### Priority 4 — Interactive Features
 
