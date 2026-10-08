@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: "images.credly.com",
         pathname: "/images/**",
       },
+      {
+        protocol: "https",
+        hostname: "covers.openlibrary.org",
+        pathname: "/b/**",
+      },
     ],
   },
 };

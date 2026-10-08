@@ -1,5 +1,12 @@
 import type { OpenLibrarySearchResult } from "./openLibrary.ts";
 
+export type LibraryReadingStatus =
+  | "want-to-read"
+  | "reading"
+  | "completed"
+  | "abandoned"
+  | "re-reading";
+
 export interface PreparedCatalogBook {
   openLibraryKey: string;
   title: string;
@@ -11,8 +18,10 @@ export interface PreparedCatalogBook {
   isbn13: string | null;
   pageCount: number | null;
   language: string | null;
+  owned: boolean;
+  readingStatus: LibraryReadingStatus;
   authors: Array<{
-    openLibraryKey: string;
+    openLibraryKey: string | null;
     name: string;
   }>;
 }
@@ -38,9 +47,13 @@ export function prepareCatalogBookRecord(
     isbn13: result.isbn13 ?? null,
     pageCount: null,
     language: result.language ?? null,
-    authors: result.authors.map((name, index) => ({
-      openLibraryKey: authorIds[index] ?? `author-${index + 1}`,
-      name: name.trim(),
-    })),
+    owned: true,
+    readingStatus: "want-to-read",
+    authors: result.authors
+      .map((name, index) => ({
+        openLibraryKey: authorIds[index] ?? null,
+        name: name.trim(),
+      }))
+      .filter((author) => author.name.length > 0),
   };
 }

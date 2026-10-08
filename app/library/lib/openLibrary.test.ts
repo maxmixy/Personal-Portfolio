@@ -30,6 +30,19 @@ test("builds an author-only request without an empty title parameter", () => {
   assert.equal(url.searchParams.has("title"), false);
   assert.equal(url.searchParams.get("author"), "Suzanne Collins");
   assert.equal(url.searchParams.get("limit"), "5");
+  assert.equal(url.searchParams.has("fields"), true);
+});
+
+test("builds an ISBN search without title or author parameters", () => {
+  const url = new URL(buildOpenLibrarySearchUrl({
+    isbn: "9780141185064",
+    title: "The Secret History",
+    author: "Donna Tartt",
+  }));
+
+  assert.equal(url.searchParams.get("isbn"), "9780141185064");
+  assert.equal(url.searchParams.has("title"), false);
+  assert.equal(url.searchParams.has("author"), false);
 });
 
 test("normalizes the real Open Library search response into a catalog model", () => {

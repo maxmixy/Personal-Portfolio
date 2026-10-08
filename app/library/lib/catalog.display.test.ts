@@ -14,7 +14,7 @@ test("maps persisted catalog records into display values", () => {
   assert.deepEqual(display, {
     author: "Donna Tartt",
     genre: "English",
-    readingStatus: "Catalog record",
+    readingStatus: "Want to read",
     description: "A mystery novel.",
     publicationYear: "1992",
   });
@@ -27,12 +27,13 @@ test("uses safe fallbacks for incomplete persisted records", () => {
     description: null,
     firstPublishedYear: null,
     language: null,
+    readingStatus: "completed",
   });
 
   assert.deepEqual(display, {
     author: "Author unavailable",
     genre: "Metadata unavailable",
-    readingStatus: "Catalog record",
+    readingStatus: "Completed",
     description: "No description is available for this record yet.",
     publicationYear: "Year unavailable",
   });

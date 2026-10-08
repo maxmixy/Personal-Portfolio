@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   pgTable,
   primaryKey,
@@ -26,6 +27,9 @@ export const books = pgTable("books", {
   pageCount: integer(),
 
   language: text(),
+
+  owned: boolean().notNull().default(true),
+  readingStatus: text().notNull().default("want-to-read"),
 
   createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),

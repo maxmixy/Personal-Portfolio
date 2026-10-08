@@ -4,37 +4,57 @@ import Link from "next/link";
 import Container from "../../components/layout/Container";
 import Footer from "../../components/layout/Footer";
 import Navbar from "../../components/layout/Navbar";
-import { books, getBookById } from "../books";
+import BookCover from "../components/BookCover";
+import { getCatalogBookBySlug } from "../lib/catalog";
+import { getCatalogCardDisplay } from "../lib/catalog.display";
+import { getCatalogBookSlug } from "../lib/catalog.slug";
 
 interface LibraryBookPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return books.map((book) => ({ slug: book.id }));
-}
-
 export async function generateMetadata({ params }: LibraryBookPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const book = getBookById(slug);
+  let book;
+
+  try {
+    book = await getCatalogBookBySlug(slug);
+  } catch {
+    return { title: "Book not found | Yuri Morrison" };
+  }
 
   if (!book) {
     return { title: "Book not found | Yuri Morrison" };
   }
 
+  const display = getCatalogCardDisplay(book);
   return {
     title: `${book.title} | Yuri Morrison`,
-    description: `${book.title} by ${book.author}. A read-only library catalog entry.`,
+    description: `${book.title} by ${display.author}. A locally persisted library catalog entry.`,
   };
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function LibraryBookPage({ params }: LibraryBookPageProps) {
   const { slug } = await params;
-  const book = getBookById(slug);
+  let book;
+
+  try {
+    book = await getCatalogBookBySlug(slug);
+  } catch {
+    notFound();
+  }
 
   if (!book) {
     notFound();
   }
+
+  const display = getCatalogCardDisplay(book);
+  const openLibraryHref = book.openLibraryKey
+    ? `https://openlibrary.org/works/${book.openLibraryKey}`
+    : "https://openlibrary.org";
+  const isbn = book.isbn13 ?? book.isbn10 ?? "Unavailable";
 
   return (
     <div className="home-page">
@@ -46,40 +66,35 @@ export default async function LibraryBookPage({ params }: LibraryBookPageProps) 
             ← Back to library
           </Link>
           <div className="mt-12 grid gap-12 md:grid-cols-[0.8fr_1.2fr] md:gap-20">
-            <aside aria-label="Book metadata">
+            <aside aria-label="Book cover">
               <div className="border border-[var(--line)] bg-[var(--paper-deep)] p-6 md:p-8">
-                <p className="project-type">Library / {book.genre}</p>
-                <div className="mt-12 flex aspect-[3/4] items-center justify-center border border-[var(--line)] bg-[var(--paper)] p-5 text-center">
-                  <div>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted)]">
-                      Reading catalog
-                    </span>
-                    <p className="mt-5 text-2xl font-semibold leading-tight">{book.title}</p>
-                    <p className="mt-3 text-sm text-[var(--ink-soft)]">{book.author}</p>
-                  </div>
+                <p className="project-type">Library / {display.genre}</p>
+                <div className="mt-8">
+                  <BookCover src={book.coverUrl} title={book.title} size="L" priority />
                 </div>
               </div>
             </aside>
 
             <article>
-              <p className="eyebrow">Read-only catalog entry</p>
+              <p className="eyebrow">Persisted catalog entry</p>
               <h1 id="book-title" className="mt-7 max-w-4xl text-5xl font-medium leading-[0.98] tracking-tight md:text-7xl">
                 {book.title}
                 <span className="accent-period">.</span>
               </h1>
-              <p className="mt-5 text-lg text-[var(--ink-soft)]">by {book.author}</p>
+              <p className="mt-5 text-lg text-[var(--ink-soft)]">by {display.author}</p>
               <p className="mt-9 max-w-2xl text-base leading-8 text-[var(--ink-soft)]">
-                {book.description}
+                {display.description}
               </p>
 
               <dl className="mt-12 border-t border-[var(--line)]">
                 {[
-                  ["ISBN", book.isbn],
-                  ["Publisher", book.publisher],
-                  ["Published", String(book.publicationYear)],
-                  ["Reading status", book.readingStatus],
-                  ["Ownership", book.ownershipStatus],
-                  ["Location", book.location],
+                  ["ISBN", isbn],
+                  ["Published", display.publicationYear],
+                  ["Language", display.genre],
+                  ["Pages", book.pageCount?.toString() ?? "Unavailable"],
+                  ["Reading status", display.readingStatus],
+                  ["Ownership", "Owned locally"],
+                  ["Added", book.createdAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })],
                 ].map(([label, value]) => (
                   <div key={label} className="grid gap-2 border-b border-[var(--line)] py-5 sm:grid-cols-[180px_1fr]">
                     <dt className="project-type">{label}</dt>
@@ -91,19 +106,25 @@ export default async function LibraryBookPage({ params }: LibraryBookPageProps) 
           </div>
         </section>
 
-        <section className="section-band py-14 md:py-20" aria-labelledby="tags-title">
+        <section className="section-band py-14 md:py-20" aria-labelledby="source-title">
           <Container>
-            <p className="eyebrow">03 / Topics</p>
-            <h2 id="tags-title" className="mt-4 text-3xl font-medium tracking-tight md:text-4xl">
-              Categories in this collection
+            <p className="eyebrow">03 / Source</p>
+            <h2 id="source-title" className="mt-4 text-3xl font-medium tracking-tight md:text-4xl">
+              Bibliographic reference
             </h2>
-            <div className="mt-8 flex flex-wrap gap-3">
-              {book.tags.map((tag) => (
-                <span key={tag} className="border border-[var(--line)] bg-[var(--paper)] px-4 py-2 text-xs text-[var(--ink-soft)]">
-                  {tag}
-                </span>
-              ))}
-            </div>
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-[var(--ink-soft)]">
+              Book metadata and covers via Open Library. Personal ownership stays in this catalog
+              and is not inferred from the provider.
+            </p>
+            <a
+              href={openLibraryHref}
+              className="mt-6 inline-flex text-sm font-medium underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--coral)] hover:decoration-[var(--coral)]"
+            >
+              View {book.title} on Open Library <span aria-hidden="true">↗</span>
+            </a>
+            <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.04em] text-[var(--muted)]">
+              Local slug / {getCatalogBookSlug(book)}
+            </p>
           </Container>
         </section>
       </main>

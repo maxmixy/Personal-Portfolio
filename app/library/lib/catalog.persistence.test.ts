@@ -30,6 +30,8 @@ test("prepares a validated catalog record from an Open Library result", () => {
     isbn13: "9780141185064",
     pageCount: null,
     language: "eng",
+    owned: true,
+    readingStatus: "want-to-read",
     authors: [
       {
         openLibraryKey: "OL789A",

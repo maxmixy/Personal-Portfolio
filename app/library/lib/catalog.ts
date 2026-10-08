@@ -1,7 +1,8 @@
-import { desc, eq, like } from "drizzle-orm";
-import { getDatabase } from "@/app/db";
+import { desc, eq, inArray, like } from "drizzle-orm";
+import { ensureLibraryBookColumns, getDatabase } from "@/app/db";
 import { authors, bookAuthors, books } from "@/app/db/schema";
 import { prepareCatalogBookRecord } from "./catalog.model";
+import { parseCatalogBookIdFromSlug } from "./catalog.slug";
 import type { OpenLibrarySearchResult } from "./openLibrary";
 
 export interface CatalogBook {
@@ -16,6 +17,8 @@ export interface CatalogBook {
   isbn13: string | null;
   pageCount: number | null;
   language: string | null;
+  owned: boolean;
+  readingStatus: string;
   authors: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -28,37 +31,51 @@ export interface CatalogBookImportResult {
   authors: string[];
 }
 
-export async function listCatalogBooks(limit = 20): Promise<CatalogBook[]> {
+export async function listCatalogBooks(limit = 80): Promise<CatalogBook[]> {
+  await ensureLibraryBookColumns();
   const db = getDatabase();
-  const rows = await db
-    .select({
-      book: books,
-      author: authors,
-    })
+  const bookRows = await db
+    .select()
     .from(books)
-    .leftJoin(bookAuthors, eq(bookAuthors.bookId, books.id))
-    .leftJoin(authors, eq(authors.id, bookAuthors.authorId))
-    .orderBy(desc(books.updatedAt))
+    .orderBy(desc(books.updatedAt), desc(books.id))
     .limit(limit);
 
-  return groupCatalogRows(rows);
+  return attachAuthors(bookRows);
+}
+
+export async function getCatalogBookById(
+  id: number,
+): Promise<CatalogBook | undefined> {
+  await ensureLibraryBookColumns();
+  const db = getDatabase();
+  const bookRows = await db.select().from(books).where(eq(books.id, id)).limit(1);
+  const [book] = await attachAuthors(bookRows);
+  return book;
+}
+
+export async function getCatalogBookBySlug(
+  slug: string,
+): Promise<CatalogBook | undefined> {
+  const id = parseCatalogBookIdFromSlug(slug);
+  if (!id) {
+    return undefined;
+  }
+
+  return getCatalogBookById(id);
 }
 
 export async function getCatalogBookByOpenLibraryKey(
   openLibraryKey: string,
 ): Promise<CatalogBook | undefined> {
+  await ensureLibraryBookColumns();
   const db = getDatabase();
-  const rows = await db
-    .select({
-      book: books,
-      author: authors,
-    })
+  const bookRows = await db
+    .select()
     .from(books)
-    .leftJoin(bookAuthors, eq(bookAuthors.bookId, books.id))
-    .leftJoin(authors, eq(authors.id, bookAuthors.authorId))
-    .where(eq(books.openLibraryKey, openLibraryKey));
-
-  return rows.length > 0 ? groupCatalogRows(rows)[0] : undefined;
+    .where(eq(books.openLibraryKey, openLibraryKey))
+    .limit(1);
+  const [book] = await attachAuthors(bookRows);
+  return book;
 }
 
 export async function findAuthorsByName(
@@ -76,6 +93,7 @@ export async function findAuthorsByName(
 export async function persistCatalogBook(
   result: OpenLibrarySearchResult,
 ): Promise<CatalogBookImportResult> {
+  await ensureLibraryBookColumns();
   const db = getDatabase();
   const record = prepareCatalogBookRecord(result);
 
@@ -100,26 +118,44 @@ export async function persistCatalogBook(
           isbn13: record.isbn13,
           pageCount: record.pageCount,
           language: record.language,
+          owned: record.owned,
+          readingStatus: record.readingStatus,
         })
         .returning({ id: books.id })
     )[0].id;
 
     for (const authorRecord of record.authors) {
-      const existingAuthor = await transaction
-        .select({ id: authors.id })
-        .from(authors)
-        .where(eq(authors.openLibraryKey, authorRecord.openLibraryKey))
-        .limit(1);
+      let authorId: number | undefined;
 
-      const authorId = existingAuthor[0]?.id ?? (
-        await transaction
-          .insert(authors)
-          .values({
-            name: authorRecord.name,
-            openLibraryKey: authorRecord.openLibraryKey,
-          })
-          .returning({ id: authors.id })
-      )[0].id;
+      if (authorRecord.openLibraryKey) {
+        const existingAuthor = await transaction
+          .select({ id: authors.id })
+          .from(authors)
+          .where(eq(authors.openLibraryKey, authorRecord.openLibraryKey))
+          .limit(1);
+        authorId = existingAuthor[0]?.id;
+      }
+
+      if (!authorId) {
+        const existingByName = await transaction
+          .select({ id: authors.id })
+          .from(authors)
+          .where(eq(authors.name, authorRecord.name))
+          .limit(1);
+        authorId = existingByName[0]?.id;
+      }
+
+      if (!authorId) {
+        authorId = (
+          await transaction
+            .insert(authors)
+            .values({
+              name: authorRecord.name,
+              openLibraryKey: authorRecord.openLibraryKey,
+            })
+            .returning({ id: authors.id })
+        )[0].id;
+      }
 
       await transaction
         .insert(bookAuthors)
@@ -136,39 +172,49 @@ export async function persistCatalogBook(
   });
 }
 
-function groupCatalogRows(
-  rows: Array<{
-    book: typeof books.$inferSelect;
-    author: typeof authors.$inferSelect | null;
-  }>,
-): CatalogBook[] {
-  const grouped = new Map<number, CatalogBook>();
-
-  for (const row of rows) {
-    const current = grouped.get(row.book.id);
-    const authorsForBook = current?.authors ?? [];
-
-    if (row.author?.name && !authorsForBook.includes(row.author.name)) {
-      authorsForBook.push(row.author.name);
-    }
-
-    grouped.set(row.book.id, {
-      id: row.book.id,
-      title: row.book.title,
-      subtitle: row.book.subtitle,
-      description: row.book.description,
-      coverUrl: row.book.coverUrl,
-      firstPublishedYear: row.book.firstPublishedYear,
-      openLibraryKey: row.book.openLibraryKey,
-      isbn10: row.book.isbn10,
-      isbn13: row.book.isbn13,
-      pageCount: row.book.pageCount,
-      language: row.book.language,
-      authors: authorsForBook,
-      createdAt: row.book.createdAt,
-      updatedAt: row.book.updatedAt,
-    });
+async function attachAuthors(
+  bookRows: Array<typeof books.$inferSelect>,
+): Promise<CatalogBook[]> {
+  if (bookRows.length === 0) {
+    return [];
   }
 
-  return Array.from(grouped.values());
+  const db = getDatabase();
+  const ids = bookRows.map((book) => book.id);
+  const authorRows = await db
+    .select({
+      bookId: bookAuthors.bookId,
+      name: authors.name,
+    })
+    .from(bookAuthors)
+    .innerJoin(authors, eq(authors.id, bookAuthors.authorId))
+    .where(inArray(bookAuthors.bookId, ids));
+
+  const authorsByBook = new Map<number, string[]>();
+  for (const row of authorRows) {
+    const names = authorsByBook.get(row.bookId) ?? [];
+    if (!names.includes(row.name)) {
+      names.push(row.name);
+    }
+    authorsByBook.set(row.bookId, names);
+  }
+
+  return bookRows.map((book) => ({
+    id: book.id,
+    title: book.title,
+    subtitle: book.subtitle,
+    description: book.description,
+    coverUrl: book.coverUrl,
+    firstPublishedYear: book.firstPublishedYear,
+    openLibraryKey: book.openLibraryKey,
+    isbn10: book.isbn10,
+    isbn13: book.isbn13,
+    pageCount: book.pageCount,
+    language: book.language,
+    owned: book.owned,
+    readingStatus: book.readingStatus,
+    authors: authorsByBook.get(book.id) ?? [],
+    createdAt: book.createdAt,
+    updatedAt: book.updatedAt,
+  }));
 }

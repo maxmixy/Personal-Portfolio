@@ -1,20 +1,30 @@
 import { NextResponse } from "next/server";
+import { compactIsbn, isIsbnValue } from "../lib/catalog.entries";
 import { searchOpenLibrary } from "../lib/openLibrary";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const title = searchParams.get("title")?.trim() ?? "";
   const author = searchParams.get("author")?.trim() ?? "";
+  const isbnParam = searchParams.get("isbn")?.trim() ?? "";
   const limit = Number.parseInt(searchParams.get("limit") ?? "5", 10);
+  const isbn = isbnParam && isIsbnValue(isbnParam) ? compactIsbn(isbnParam).toUpperCase() : "";
 
-  if (!title && !author) {
+  if (isbnParam && !isbn) {
     return NextResponse.json(
-      { error: "Enter an author or a title to search." },
+      { error: "Enter a valid ISBN-10 or ISBN-13 value." },
       { status: 400 },
     );
   }
 
-  if (title && (title.length < 2 || title.length > 120)) {
+  if (!title && !author && !isbn) {
+    return NextResponse.json(
+      { error: "Enter a title, author, or ISBN to search." },
+      { status: 400 },
+    );
+  }
+
+  if (title && (title.length < 2 || title.length > 120) && !isbn) {
     return NextResponse.json(
       { error: "Enter a title between 2 and 120 characters." },
       { status: 400 },
@@ -29,7 +39,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    const results = await searchOpenLibrary({ title, author, limit: Number.isFinite(limit) ? limit : 5 });
+    const results = await searchOpenLibrary({
+      title: isbn ? undefined : title,
+      author: isbn ? undefined : author,
+      isbn: isbn || undefined,
+      limit: Number.isFinite(limit) ? limit : 5,
+    });
     return NextResponse.json({ results });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Open Library is unavailable.";

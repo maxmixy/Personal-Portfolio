@@ -202,6 +202,20 @@
           "primaryKey": false,
           "notNull": false
         },
+        "owned": {
+          "name": "owned",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "true"
+        },
+        "readingStatus": {
+          "name": "readingStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'want-to-read'"
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp with time zone",

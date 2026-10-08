@@ -20,7 +20,9 @@ The following tables are present and represented by the Drizzle schema:
 - `authors`
 - `book_authors`
 
-The table definitions are in [app/db/schema.ts](../app/db/schema.ts). The generated migration is [drizzle/0000_deep_wild_pack.sql](../drizzle/0000_deep_wild_pack.sql).
+The `books` table now includes personal library state fields such as `owned` and `readingStatus`, which are part of the local ownership model rather than Open Library metadata.
+
+The table definitions are in [app/db/schema.ts](../app/db/schema.ts). The generated migrations are [drizzle/0000_deep_wild_pack.sql](../drizzle/0000_deep_wild_pack.sql) and [drizzle/0001_library_reading_status.sql](../drizzle/0001_library_reading_status.sql).
 
 The application is wired to Drizzle's Node PostgreSQL driver through `pg`. Runtime connectivity is not confirmed by the current terminal execution context, so the live database must be checked with a command that returns visible output before this status is treated as operational.
 
@@ -35,42 +37,45 @@ The application must not rely on the external Open Library API as its source of 
 
 ---
 
-## 0.1 Current Progress — 2026-10-06
+## 0.1 Current Progress — 2026-10-08
 
 ### Implemented
 
 - The database client now uses `pg` with Drizzle's Node PostgreSQL driver and lazy initialization through `getDatabase()`.
 - The existing `books`, `authors`, and `book_authors` schema is represented by the Drizzle schema and generated migration.
+- The `books` table now stores local personal metadata including `owned` and `readingStatus`, with a default of `true` and `want-to-read` respectively.
 - Catalog reads now expose database-backed book listing, lookup by Open Library key, and author-name search.
 - The Open Library search result model is normalized into a stable local record model.
 - Selected candidate imports now use a server-side POST endpoint instead of only updating client state.
 - Persistence is transactional: an existing book is reused, missing authors are created, and book-author relationships are inserted idempotently.
 - The Library page now loads persisted records, displays an empty state, and reports catalog configuration errors without crashing the route.
-- Persistence-focused model tests have been added for record transformation and required provider identity.
-- VS Code diagnostics report no errors in the modified persistence files during the latest source review.
+- The bookshelf interface is implemented with spine-based navigation and preview cards.
+- The library detail route now reads persisted records and renders metadata from the local catalog.
+- Reading status rendering is now mapped to human-readable labels and stored as personal catalog state instead of a static placeholder.
+- Focused library tests for parsing, display formatting, persistence preparation, and Open Library normalization are present and passing.
+- VS Code diagnostics report no errors in the reviewed library persistence and display files during the latest source review.
 
 ### Current verification status
 
-- Source implementation: **in progress / implemented**.
-- Editor diagnostics: **clean for the reviewed persistence files**.
-- Focused persistence tests: **tests added; terminal execution output was not returned successfully**.
-- ESLint: **terminal output unavailable; not claimed as passing**.
-- Production build: **terminal output unavailable; not claimed as passing**.
+- Source implementation: **implemented for the current catalog milestone**.
+- Editor diagnostics: **clean for the reviewed library files**.
+- Focused library tests: **12/12 passed in the current terminal run**.
+- ESLint: **not yet run in this session; not claimed as passing**.
+- Production build: **not yet run in this session; not claimed as passing**.
 - Live Neon connection: **not confirmed by the current terminal execution context**.
 - Live database writes: **not confirmed**.
 
-The persisted catalog should not be considered operational until a fresh database connection test returns the expected tables and a real import request completes successfully.
+The catalog is functionally implemented at the source-code level, but it should still not be treated as operationally live until a fresh database connection test returns the expected tables and a real import request completes successfully.
 
 ### Remaining work
 
 1. Confirm the Neon `DATABASE_URL` and live PostgreSQL connection from a terminal that returns visible output.
-2. Run the focused persistence tests and capture their pass/fail count.
-3. Run the full lint and production build commands and capture explicit exit codes.
-4. Verify a selected import creates a book, its author, and the join row.
-5. Confirm duplicate imports remain idempotent.
-6. Replace the initial card-based catalog with the intended bookshelf experience.
-7. Implement the book detail route from persisted data.
-8. Continue with reading status, ownership, and future borrowing metadata.
+2. Run the full lint and production build commands and capture explicit exit codes.
+3. Verify a selected import creates a book, its author, and the join row against the live schema.
+4. Confirm duplicate imports remain idempotent in the live database.
+5. Continue improving the visual bookshelf treatment and interaction details to match the intended editorial design system more closely.
+6. Expand personal metadata beyond reading status into notes, ratings, and future borrowing fields as needed.
+7. Continue with the next phases of loan, reservation, and borrowing workflows after the catalog is operational.
 
 ---
 
