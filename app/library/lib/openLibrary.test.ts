@@ -11,6 +11,7 @@ test("builds a bounded Open Library search request", () => {
     title: "The Secret History",
     author: "Donna Tartt",
     limit: 5,
+    offset: 10,
   }));
 
   assert.equal(url.origin, "https://openlibrary.org");
@@ -18,6 +19,7 @@ test("builds a bounded Open Library search request", () => {
   assert.equal(url.searchParams.get("title"), "The Secret History");
   assert.equal(url.searchParams.get("author"), "Donna Tartt");
   assert.equal(url.searchParams.get("limit"), "5");
+  assert.equal(url.searchParams.get("offset"), "10");
 });
 
 test("builds an author-only request without an empty title parameter", () => {
@@ -60,6 +62,9 @@ test("normalizes the real Open Library search response into a catalog model", ()
   });
 
   assert.deepEqual(result, {
+    provider: "openlibrary",
+    providerId: "OL789M",
+    providerRecords: [{ provider: "openlibrary", id: "work:OL123W" }, { provider: "openlibrary", id: "edition:OL789M" }],
     openLibraryWorkId: "OL123W",
     openLibraryEditionId: "OL789M",
     openLibraryAuthorIds: ["OL456A"],

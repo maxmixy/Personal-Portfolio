@@ -35,6 +35,8 @@ export interface BookshelfBook {
   firstPublishedYear: number | null;
   publicationYear: string;
   readingStatus: string;
+  rating: number | null;
+  availability: string;
   language: string;
 }
 
@@ -95,6 +97,8 @@ export function getBookshelfBook(book: {
   firstPublishedYear: number | null;
   language: string | null;
   readingStatus?: string | null;
+  rating?: number | null;
+  availability?: string | null;
 }): BookshelfBook {
   const display = getCatalogCardDisplay({
     title: book.title,
@@ -115,6 +119,8 @@ export function getBookshelfBook(book: {
     firstPublishedYear: book.firstPublishedYear,
     publicationYear: display.publicationYear,
     readingStatus: display.readingStatus,
+    rating: book.rating ?? null,
+    availability: book.availability ?? "available",
     language: display.genre,
   };
 }

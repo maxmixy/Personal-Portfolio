@@ -3,17 +3,19 @@ import Link from "next/link";
 import Container from "../components/layout/Container";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
-import Bookshelf from "./components/Bookshelf";
+import LibraryCollection from "./components/LibraryCollection";
 import BulkBookImport from "./components/BulkBookImport";
 import { listCatalogBooks, type CatalogBook } from "./lib/catalog";
 import { getBookshelfBook } from "./lib/catalog.display";
+import { getCurrentLibraryUser } from "./lib/auth";
+import { getLibraryPreviewUser, getLibraryViewRole, isRolePreview } from "./lib/role-preview";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Reading Library | Yuri Morrison",
   description:
-    "A personal library catalog with Open Library metadata and local ownership context.",
+    "A personal library catalog with book metadata from Open Library and Google Books.",
 };
 
 export default async function LibraryPage() {
@@ -28,6 +30,25 @@ export default async function LibraryPage() {
   }
 
   const shelfBooks = books.map(getBookshelfBook);
+  let accountLabel = "Sign in / Create account";
+  let accountHref = "/library/account";
+  let isOwner = false;
+  let previewing = false;
+  try {
+    const actualUser = await getCurrentLibraryUser();
+    const viewRole = await getLibraryViewRole(actualUser);
+    const user = getLibraryPreviewUser(actualUser, viewRole);
+    previewing = isRolePreview(actualUser, viewRole);
+    if (user) {
+      accountLabel = user.role === "owner" ? "Manage loan requests" : `Signed in as ${user.displayName}`;
+      if (user.role === "owner") {
+        accountHref = "/library/loans";
+        isOwner = true;
+      }
+    }
+  } catch {
+    // Account setup is independent of rendering the public book collection.
+  }
 
   return (
     <div className="home-page">
@@ -50,6 +71,9 @@ export default async function LibraryPage() {
               ownership remains local and is never inferred from the provider.
             </p>
           </div>
+          <Link href={accountHref} className="mt-8 inline-flex text-link">
+            {accountLabel} <span aria-hidden="true">→</span>
+          </Link>
         </section>
 
         <section className="section-band py-14 md:py-20" aria-labelledby="catalog-title">
@@ -74,15 +98,29 @@ export default async function LibraryPage() {
 
             {books.length === 0 && !catalogError ? (
               <div className="border border-dashed border-[var(--line)] bg-[var(--paper)] p-8 text-sm text-[var(--ink-soft)]">
-                No locally persisted books yet. Search Open Library and import a selected candidate.
+                {isOwner
+                  ? "No locally persisted books yet. Search Open Library and import a selected edition."
+                  : "No locally persisted books yet. The library owner has not imported any books."}
               </div>
             ) : (
-              <Bookshelf books={shelfBooks} />
+              <LibraryCollection books={shelfBooks} />
             )}
           </Container>
         </section>
 
-        <BulkBookImport />
+        {isOwner && !previewing ? (
+          <BulkBookImport />
+        ) : isOwner && previewing ? (
+          <section className="section-band py-10">
+            <div className="page-width text-sm text-[var(--ink-soft)]">Catalog import controls are hidden while previewing another role.</div>
+          </section>
+        ) : (
+          <section className="section-band py-10">
+            <div className="page-width text-sm text-[var(--ink-soft)]">
+              Catalog imports are managed by the library owner.
+            </div>
+          </section>
+        )}
 
         <section className="page-width py-14 md:py-20">
           <div className="border-y border-[var(--line)] py-8 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-12">
@@ -93,8 +131,8 @@ export default async function LibraryPage() {
               </h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--ink-soft)]">
                 This version searches Open Library, stores reviewed editions locally,
-                and presents the collection as a bookshelf. Reviews, recommendations,
-                and loans remain later capabilities.
+                and presents the collection as a bookshelf. Borrowing requests are
+                authenticated and require owner approval before a book is reserved.
               </p>
               <p className="mt-4 text-xs text-[var(--muted)]">
                 Book metadata and covers via{" "}

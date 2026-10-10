@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { compactIsbn, isIsbnValue } from "../lib/catalog.entries";
-import { searchOpenLibrary } from "../lib/openLibrary";
+import { searchCatalog } from "../lib/catalog.search";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -8,6 +8,7 @@ export async function GET(request: Request) {
   const author = searchParams.get("author")?.trim() ?? "";
   const isbnParam = searchParams.get("isbn")?.trim() ?? "";
   const limit = Number.parseInt(searchParams.get("limit") ?? "5", 10);
+  const offset = Number.parseInt(searchParams.get("offset") ?? "0", 10);
   const isbn = isbnParam && isIsbnValue(isbnParam) ? compactIsbn(isbnParam).toUpperCase() : "";
 
   if (isbnParam && !isbn) {
@@ -38,16 +39,24 @@ export async function GET(request: Request) {
     );
   }
 
+  if (!Number.isInteger(offset) || offset < 0 || offset > 1000) {
+    return NextResponse.json({ error: "Search offset must be between 0 and 1000." }, { status: 400 });
+  }
+
   try {
-    const results = await searchOpenLibrary({
+    const search = await searchCatalog({
       title: isbn ? undefined : title,
       author: isbn ? undefined : author,
       isbn: isbn || undefined,
       limit: Number.isFinite(limit) ? limit : 5,
+      offset,
     });
-    return NextResponse.json({ results });
+    if (search.providers.length === 2) {
+      return NextResponse.json({ error: "Both book metadata providers are unavailable.", results: [], providers: search.providers }, { status: 502 });
+    }
+    return NextResponse.json({ results: search.results, providers: search.providers, hasMore: search.hasMore });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Open Library is unavailable.";
+    const message = error instanceof Error ? error.message : "Book search is unavailable.";
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }

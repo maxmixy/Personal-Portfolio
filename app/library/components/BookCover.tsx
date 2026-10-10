@@ -26,7 +26,7 @@ export default function BookCover({
   if (!imageSrc) {
     return (
       <div
-        className="book-cover-fallback"
+        className={`book-cover-fallback${size === "S" ? " book-cover-fallback-compact" : ""}`}
         style={{ aspectRatio: `${width} / ${height}` }}
         aria-hidden="true"
       >

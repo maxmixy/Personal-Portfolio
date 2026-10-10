@@ -2,6 +2,7 @@ export interface SpineTreatment {
   background: string;
   color: string;
   width: number;
+  height: number;
 }
 
 const SPINE_PALETTES: Array<Pick<SpineTreatment, "background" | "color">> = [
@@ -22,9 +23,11 @@ export function getSpineTreatment(title: string, id: number): SpineTreatment {
 
   const palette = SPINE_PALETTES[Math.abs(hash) % SPINE_PALETTES.length];
   const width = 28 + (Math.abs(hash) % 18);
+  const height = 156 + (Math.abs(hash * 7) % 35);
 
   return {
     ...palette,
     width,
+    height,
   };
 }

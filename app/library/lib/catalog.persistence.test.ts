@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { prepareCatalogBookRecord } from "./catalog.model.ts";
+import { fillMissingCatalogMetadata, prepareCatalogBookRecord } from "./catalog.model.ts";
 import type { OpenLibrarySearchResult } from "./openLibrary.ts";
 
 test("prepares a validated catalog record from an Open Library result", () => {
@@ -21,6 +21,8 @@ test("prepares a validated catalog record from an Open Library result", () => {
 
   assert.deepEqual(prepareCatalogBookRecord(result), {
     openLibraryKey: "OL123W",
+    openLibraryEditionId: "OL456M",
+    providerRecords: [{ provider: "openlibrary", id: "edition:OL456M" }],
     title: "The Secret History",
     subtitle: null,
     description: null,
@@ -30,6 +32,8 @@ test("prepares a validated catalog record from an Open Library result", () => {
     isbn13: "9780141185064",
     pageCount: null,
     language: "eng",
+    publisher: "Knopf",
+    publishDate: "1992",
     owned: true,
     readingStatus: "want-to-read",
     authors: [
@@ -41,7 +45,7 @@ test("prepares a validated catalog record from an Open Library result", () => {
   });
 });
 
-test("rejects an import without a stable Open Library work identifier", () => {
+test("rejects an import without a stable provider identifier", () => {
   const result: OpenLibrarySearchResult = {
     title: "The Secret History",
     authors: ["Donna Tartt"],
@@ -49,6 +53,43 @@ test("rejects an import without a stable Open Library work identifier", () => {
 
   assert.throws(
     () => prepareCatalogBookRecord(result),
-    /Open Library work ID is required/,
+    /provider ID and title are required/,
   );
+});
+
+test("prepares a Google Books-only record without writing its volume ID as an Open Library key", () => {
+  const record = prepareCatalogBookRecord({
+    provider: "googlebooks",
+    providerId: "volume-123",
+    providerRecords: [{ provider: "googlebooks", id: "volume-123" }],
+    title: "A Google-only book",
+    authors: ["A. Writer"],
+    description: "Description",
+    coverUrl: "https://books.google.com/books?id=volume-123&printsec=frontcover",
+  });
+
+  assert.equal(record.openLibraryKey, null);
+  assert.equal(record.openLibraryEditionId, null);
+  assert.deepEqual(record.providerRecords, [{ provider: "googlebooks", id: "volume-123" }]);
+  assert.equal(record.description, "Description");
+});
+
+test("fills absent metadata without replacing existing catalog values", () => {
+  const incoming = prepareCatalogBookRecord({
+    provider: "googlebooks", providerId: "volume-123", title: "Different provider title", authors: ["A. Writer"],
+    description: "New description", coverUrl: "https://books.google.com/cover.jpg", publisher: "New publisher", publishDate: "2001", pageCount: 200,
+  });
+  const merged = fillMissingCatalogMetadata({
+    subtitle: null, description: "Existing description", coverUrl: null, firstPublishedYear: null,
+    isbn10: null, isbn13: null, pageCount: 100, language: "en", publisher: "Existing publisher",
+    publishDate: null, openLibraryKey: "OL1W", openLibraryEditionId: null,
+  }, incoming);
+
+  assert.equal(merged.description, "Existing description");
+  assert.equal(merged.pageCount, 100);
+  assert.equal(merged.publisher, "Existing publisher");
+  assert.equal(merged.language, "en");
+  assert.equal(merged.coverUrl, "https://books.google.com/cover.jpg");
+  assert.equal(merged.openLibraryKey, "OL1W");
+  assert.equal(merged.publishDate, "2001");
 });

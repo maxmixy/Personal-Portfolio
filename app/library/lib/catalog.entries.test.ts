@@ -20,6 +20,14 @@ Dune
   ]);
 });
 
+test("parses separate author-only lines as author filters instead of titles", () => {
+  assert.deepEqual(parseLibraryEntries("Dune", "Frank Herbert\nUrsula K. Le Guin"), [
+    { raw: "Dune", title: "Dune" },
+    { raw: "Frank Herbert", title: "", author: "Frank Herbert", authorOnly: true },
+    { raw: "Ursula K. Le Guin", title: "", author: "Ursula K. Le Guin", authorOnly: true },
+  ]);
+});
+
 test("builds a stable trailing-id slug for catalog routes", () => {
   const slug = getCatalogBookSlug({ id: 12, title: "The Secret History" });
   assert.equal(slug, "the-secret-history-12");

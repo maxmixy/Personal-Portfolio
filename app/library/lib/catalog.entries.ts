@@ -3,6 +3,7 @@ export interface LibraryEntry {
   title: string;
   author?: string;
   isbn?: string;
+  authorOnly?: boolean;
 }
 
 const ISBN_COMPACT = /^(?:\d{9}[\dXx]|\d{13})$/;
@@ -15,13 +16,19 @@ export function isIsbnValue(value: string): boolean {
   return ISBN_COMPACT.test(compactIsbn(value));
 }
 
-export function parseLibraryEntries(input: string): LibraryEntry[] {
-  return input
+export function parseLibraryEntries(input: string, authorInput = ""): LibraryEntry[] {
+  const bookEntries = input
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean)
     .slice(0, 10)
     .map(parseLibraryEntry);
+  const authorEntries = authorInput
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((author): LibraryEntry => ({ raw: author, title: "", author, authorOnly: true }));
+  return [...bookEntries, ...authorEntries].slice(0, 10);
 }
 
 export function parseLibraryEntry(raw: string): LibraryEntry {
