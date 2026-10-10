@@ -76,6 +76,9 @@ Use local environment configuration such as `.env.local` for development and ens
 ```text
 SPOTIFY_CLIENT_ID
 SPOTIFY_CLIENT_SECRET
+SPOTIFY_REDIRECT_URI
+SPOTIFY_TOKEN_ENCRYPTION_KEY
+SPOTIFY_OWNER_KEY
 RIOT_API_KEY
 DATABASE_URL
 AUTH_SECRET
@@ -91,11 +94,11 @@ Choose cache lifetimes based on freshness, privacy, and external rate limits:
 - Riot profile/rank: medium-lived; match history: short/medium-lived; static game assets: long-lived.
 - Library: optimize database queries first and cache only when there is a clear benefit.
 
-Keep cache keys scoped to the correct account/region and avoid sharing private user data across visitors. Make stale data and refresh behavior understandable to users.
+Keep cache keys scoped to the correct account/region and avoid sharing private user data across visitors. Spotify’s owner-approved top tracks and artists are an intentional public-data exception; refresh snapshots every ten minutes when requested, delete them after seven days without refresh, and use a short stale fallback during provider outages. Make stale data and refresh behavior understandable to users.
 
 ## Privacy and Authorization
 
-Treat listening history, Riot identifiers, player names, reviews, borrower data, email, authentication information, and loan history as potentially sensitive. Display only information Yuri intends to make public.
+Treat listening history, Riot identifiers, player names, reviews, borrower data, email, authentication information, and loan history as potentially sensitive. Spotify owner tokens are encrypted in the database and never returned to browsers. Only the owner-selected top tracks and artists are published publicly; visitors never authorize Spotify or provide their own listening data.
 
 Loan records must not be public. Visitors must not be able to mark books as loaned or alter owner-controlled data without authorization. Keep email and authentication data private. Apply authorization on the server, not only by hiding controls in the UI.
 

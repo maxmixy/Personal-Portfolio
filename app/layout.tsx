@@ -1,5 +1,3 @@
-import { Analytics } from "@vercel/analytics/next"
-
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -7,15 +5,15 @@ import "./globals.css";
 const geistSans = localFont({
   src: "./fonts/Geist-Variable.woff2",
   variable: "--font-geist-sans",
-  weight: "400 600",
   display: "swap",
+  weight: "100 900",
 });
 
 const geistMono = localFont({
   src: "./fonts/GeistMono-Variable.woff2",
   variable: "--font-geist-mono",
-  weight: "400 600",
   display: "swap",
+  weight: "100 900",
 });
 
 export const metadata: Metadata = {

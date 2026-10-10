@@ -39,9 +39,9 @@ The portfolio itself should demonstrate engineering ability rather than simply d
 
 ## 2. Current Development Phase
 
-**Phase:** Personal applications / Priority 3
+**Phase:** Personal Applications
 
-**Current priority:** The data-backed Library catalog, accounts, and core borrowing workflow are implemented. Complete production-build verification and continue focused bookshelf usability refinement before starting another personal application.
+**Current priority:** Verify the owner-connected public Spotify dashboard, then reassess League and library priorities.
 
 ### Current objectives
 
@@ -62,21 +62,7 @@ The Library is an owner-managed catalog with borrower accounts and owner-control
 
 ## 3. Current Implementation
 
-The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional. Priority 3 includes a persistent Library catalog at `/library`, database-backed detail pages at `/library/[slug]`, account management, and the core borrowing workflow.
-
-### Library currently includes
-
-* Neon PostgreSQL catalog persistence with edition-aware identity, authors, reading state, ratings, notes, reviews, and availability
-* Open Library and Google Books search with normalized candidates, edition review, bulk import, and per-query result pagination
-* Duplicate-safe transactional imports and provider identifiers stored separately
-* Responsive bookshelf with width-based shelf packing, title-derived spine variation, sampled cover colors, and upright separators between horizontal author stacks
-* Search, status filters, sorting, keyboard navigation, desktop hover/focus previews, mobile tap previews, and detail navigation
-* Database-backed `/library/[slug]` detail pages with provider references
-* Neon Managed Better Auth email/password accounts with code-based verification
-* Borrower requests and owner-managed rejection, approval, reservation, handover, and return workflow
-* Owner-only preview controls for public, borrower, and owner views; server authorization remains tied to the real session
-* Owner-confirmed live database, provider, auth, and borrowing checks (2026-10-10)
-* Geist Sans and Geist Mono are now self-hosted under the SIL Open Font License; the production build passed after removing the Google Fonts build-time dependency
+The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional. `/music` publicly displays the owner-selected Spotify top tracks and artists after explicit sharing consent. Its local Neon tables are created; Spotify credentials, owner authorization, and live public data still need setup and verification. `/privacy` describes Spotify data handling.
 
 ### Homepage currently includes
 
@@ -355,6 +341,8 @@ Personal/interest routes:
 /music
 /league
 ```
+
+`/music` is implemented as an owner-connected public dashboard. `/league` and `/library` remain future personal application routes.
 
 Future/experimental routes:
 

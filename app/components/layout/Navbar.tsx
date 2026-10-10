@@ -16,6 +16,7 @@ export default function Navbar() {
             <Link href="/achievements" className="component-nav-secondary">Achievements</Link>
             <Link href="/library" className="component-nav-secondary">Library</Link>
             <Link href="/about">About</Link>
+            <Link href="/music" className="component-nav-music">Music</Link>
           </div>
           <Link href="/contact" className="nav-contact">
             Get in touch <span aria-hidden="true">↗</span>
