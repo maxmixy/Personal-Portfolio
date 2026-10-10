@@ -36,7 +36,7 @@ export default function MusicDashboard({ configured, setupRequired, authorizatio
   const [reducedMotion, setReducedMotion] = useState(false);
   const [cardMotion, setCardMotion] = useState<{ phase: "idle" | "exit" | "enter"; direction: -1 | 1 }>({ phase: "idle", direction: 1 });
   const transitionBusy = useRef(false);
-  const transitionTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const transitionTimers = useRef<number[]>([]);
 
   const featuredTrack = data?.tracks[featuredIndex] ?? data?.tracks[0];
 
