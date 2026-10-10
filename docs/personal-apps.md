@@ -10,24 +10,40 @@ Every external-data application needs loading, success, empty, error, stale-data
 
 Route: `/music`.
 
-Use Spotify OAuth and server-side API requests. Candidate scopes:
+The page publicly displays only Yuri’s Spotify listening data. Site visitors do not connect accounts and no visitor listening data is fetched. The owner authorizes one Spotify account through an owner-only setup flow; Spotify credentials stay on the server.
+
+Use Spotify OAuth and server-side API requests. The initial scope is:
 
 ```text
 user-top-read
-user-read-recently-played
-user-read-currently-playing
 ```
 
 Build in increments:
 
 1. Register/configure the Spotify application and callback URL.
-2. Implement OAuth and secure server-side token handling.
-3. Fetch top tracks and artists; support short-, medium-, and long-term ranges where the API permits.
-4. Add recently played and optional currently playing data.
-5. Add loading, authorization-expired, empty, and API-failure states.
-6. Add caching and data freshness labels appropriate to each dataset.
+2. Apply the Spotify dashboard database migration and configure the owner key and token-encryption key.
+3. Authorize Yuri’s Spotify account from `/music?owner=1`.
+4. Fetch top tracks and artists; support short-, medium-, and long-term ranges where the API permits.
+5. Keep public snapshots in a short-lived cache with a stale-data fallback.
+6. Add recently played and optional currently playing data if Yuri chooses to publish them.
 
-Link Spotify content back to Spotify and include required attribution. Follow current Spotify platform policies; do not download or redistribute content or use Spotify content as AI training data. Treat listening history as personal data and publish only what Yuri intentionally shares.
+Link Spotify content back to Spotify and include required attribution. Follow current Spotify platform policies; do not download or redistribute content or use Spotify content as AI training data. The selected top-track and top-artist data is intentionally public. Do not add listening history or other private data to the public response without explicit owner approval.
+
+### Implementation status — 2026-10-10
+
+The owner-connected public dashboard is implemented:
+
+- Spotify Authorization Code flow with a state check and server-only client credentials.
+- The owner-only setup form at `/music?owner=1` protects OAuth connection and disconnection with `SPOTIFY_OWNER_KEY` and requires explicit confirmation that top tracks and artists will be public.
+- Access and refresh tokens are encrypted with `SPOTIFY_TOKEN_ENCRYPTION_KEY` and stored in the server database; tokens are never sent to clients.
+- Top tracks and artists are shown for short-, medium-, and long-term ranges.
+- A public server cache refreshes selected data every ten minutes when requested, falls back to a stale snapshot during outages, and deletes snapshots after seven days without refresh.
+- The UI includes setup, empty, provider failure, rate-limit, stale-data, and owner reconnect states.
+- Spotify links are provided for displayed tracks and artists.
+
+Set `DATABASE_URL`, `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REDIRECT_URI`, `SPOTIFY_TOKEN_ENCRYPTION_KEY`, and `SPOTIFY_OWNER_KEY` in the server environment. Generate the two keys independently with long random values. The migration has been applied to the Neon database currently configured for local development; apply [the Spotify dashboard migration](../database/0001_spotify_public_dashboard.sql) to any other database. For local development, register `http://127.0.0.1:3000/music/api/callback` as the redirect URI and set the same value in `SPOTIFY_REDIRECT_URI`; open the site at `http://127.0.0.1:3000` so the OAuth state cookie uses the matching host. Spotify requires HTTPS outside loopback development and does not accept `localhost` as a redirect URI. The callback path is `/music/api/callback`. Visit `/music?owner=1`, enter `SPOTIFY_OWNER_KEY`, confirm public sharing, and approve the Spotify consent screen to start publishing. The published data and owner data handling are described in the [privacy notice](/privacy).
+
+Recent plays and currently playing data remain future increments. OAuth and live data still need verification with Spotify credentials. Spotify development-mode setup requires the developer app owner to have Premium and only allowlisted Spotify accounts can authorize; the owner’s account must be allowlisted.
 
 ## League: Riot Games
 

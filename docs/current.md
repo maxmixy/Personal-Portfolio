@@ -39,9 +39,9 @@ The portfolio itself should demonstrate engineering ability rather than simply d
 
 ## 2. Current Development Phase
 
-**Phase:** Core Portfolio
+**Phase:** Personal Applications
 
-**Current priority:** Build the remaining professional routes on the shared design system. The next route is `/contact`.
+**Current priority:** Verify the owner-connected public Spotify dashboard, then reassess League and library priorities.
 
 ### Current objectives
 
@@ -63,7 +63,7 @@ Do not begin personal dashboard integrations or experimental functionality while
 
 ## 3. Current Implementation
 
-The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional.
+The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional. `/music` publicly displays the owner-selected Spotify top tracks and artists after explicit sharing consent. Its local Neon tables are created; Spotify credentials, owner authorization, and live public data still need setup and verification. `/privacy` describes Spotify data handling.
 
 ### Homepage currently includes
 
@@ -334,6 +334,8 @@ Personal/interest routes:
 /library/[slug]
 ```
 
+`/music` is implemented as an owner-connected public dashboard. `/league` and `/library` remain future personal application routes.
+
 Future/experimental routes:
 
 ```text
@@ -377,9 +379,8 @@ The order may change when dependencies make another sequence more practical.
 
 ### Priority 3 — Personal Applications
 
-Only after the professional portfolio foundation is sufficiently complete:
+The Spotify dashboard is the active personal application. Complete its runtime setup and verify public snapshots, then reassess League and library priorities:
 
-* Spotify dashboard
 * League dashboard
 * Book library
 
