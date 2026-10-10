@@ -25,7 +25,7 @@ The current homepage palette is defined in `app/globals.css`:
 
 Treat these as the implemented palette, not immutable brand requirements. Keep accent colors purposeful and preserve legible contrast. Earlier palette examples in the master blueprint are conceptual alternatives, not the current CSS values.
 
-Geist and Geist Mono are loaded by the root layout, and the global body now uses the Geist sans font variable. Satoshi, Instrument Sans, Space Grotesk, and Manrope remain possible alternatives; use a font only when it can be loaded reliably and legally.
+Geist and Geist Mono are self-hosted from licensed local WOFF2 assets in `app/fonts`, loaded through `next/font/local`, and applied through the root layout's CSS variables. Satoshi, Instrument Sans, Space Grotesk, and Manrope remain possible alternatives; use a font only when it can be loaded reliably and legally.
 
 The desktop content container currently tops out at 1240px. Maintain comfortable line lengths, consistent gutters, and generous section spacing.
 

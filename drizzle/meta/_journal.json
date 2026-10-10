@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791305347055,
+      "tag": "0000_deep_wild_pack",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1763590000000,
+      "tag": "0001_library_reading_status",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791504000000,
+      "tag": "0002_library_editions_personal_metadata",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791504060000,
+      "tag": "0003_library_accounts_loans",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791630000000,
+      "tag": "0004_neon_managed_auth",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791673200000,
+      "tag": "0005_book_provider_identifiers",
+      "breakpoints": true
+    }
+  ]
+}
