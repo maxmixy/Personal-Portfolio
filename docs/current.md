@@ -41,37 +41,42 @@ The portfolio itself should demonstrate engineering ability rather than simply d
 
 **Phase:** Personal applications / Priority 3
 
-**Current priority:** Build the read-only Library catalog and its detail pages. This is the first Priority 3 slice and does not require credentials, database persistence, authentication, reviews, recommendations, or loans.
+**Current priority:** The data-backed Library catalog, accounts, and core borrowing workflow are implemented. Complete production-build verification and continue focused bookshelf usability refinement before starting another personal application.
 
 ### Current objectives
 
-* Deliver a responsive, accessible read-only library catalog.
-* Create static detail routes for every sample book.
-* Reuse the existing portfolio shell and design tokens.
-* Keep all sample data explicitly labeled as a demonstration rather than personal ownership records.
+* Keep the live, database-backed library catalog reliable and accessible.
+* Verify the production build and current bookshelf behavior across responsive breakpoints.
+* Preserve the separation between external bibliographic metadata, local personal data, authentication, and loan records.
+* Use the existing portfolio shell and design tokens.
 * Preserve the completed professional portfolio and Vercel Analytics integration.
-* Defer database, authentication, reviews, recommendations, and loan workflows until a concrete user need requires them.
+* Defer recommendations and analytics until the existing catalog experience is fully verified.
 
 ### Current development principle
 
 > Quality and completion are more important than feature count.
 
-The Library catalog is intentionally read-only. Spotify OAuth, Riot integration, owner-managed library workflows, reviews, recommendations, and loans are future work and are not part of this current slice.
+The Library is an owner-managed catalog with borrower accounts and owner-controlled loans. Spotify OAuth, Riot integration, recommendations, and reading analytics remain future work.
 
 ---
 
 ## 3. Current Implementation
 
-The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional. Priority 3 has started with a read-only Library catalog at `/library` and static detail pages at `/library/[slug]`.
+The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional. Priority 3 includes a persistent Library catalog at `/library`, database-backed detail pages at `/library/[slug]`, account management, and the core borrowing workflow.
 
-### Library route currently includes
+### Library currently includes
 
-* Six typed sample book records with metadata and reading status
-* Responsive catalog grid with accessible detail links
-* Static detail pages for every sample book
-* Clear page-not-found behavior for unknown slugs
-* Explicit read-only scope and no personal ownership or loan data
-* Shared navigation, footer, Container, and visual design system
+* Neon PostgreSQL catalog persistence with edition-aware identity, authors, reading state, ratings, notes, reviews, and availability
+* Open Library and Google Books search with normalized candidates, edition review, bulk import, and per-query result pagination
+* Duplicate-safe transactional imports and provider identifiers stored separately
+* Responsive bookshelf with width-based shelf packing, title-derived spine variation, sampled cover colors, and upright separators between horizontal author stacks
+* Search, status filters, sorting, keyboard navigation, desktop hover/focus previews, mobile tap previews, and detail navigation
+* Database-backed `/library/[slug]` detail pages with provider references
+* Neon Managed Better Auth email/password accounts with code-based verification
+* Borrower requests and owner-managed rejection, approval, reservation, handover, and return workflow
+* Owner-only preview controls for public, borrower, and owner views; server authorization remains tied to the real session
+* Owner-confirmed live database, provider, auth, and borrowing checks (2026-10-10)
+* Geist Sans and Geist Mono are now self-hosted under the SIL Open Font License; the production build passed after removing the Google Fonts build-time dependency
 
 ### Homepage currently includes
 
@@ -336,7 +341,7 @@ Implemented Priority 3 routes:
 /library/[slug]
 ```
 
-The Library routes are read-only catalog previews. They contain sample data and do not represent live ownership, review, recommendation, or loan records.
+The Library routes use the local database for canonical ownership, personal metadata, availability, and loan records. External providers supply bibliographic search candidates only.
 
 Remaining professional portfolio routes:
 
@@ -385,30 +390,19 @@ The order may change when dependencies make another sequence more practical.
 
 ### Priority 3 — Personal Applications
 
-The current slice is the read-only Library catalog:
+The Library catalog, account system, and initial borrowing lifecycle are implemented. Recommended next work:
 
-* `/library` shows the sample catalog.
-* `/library/[slug]` renders a static detail page for each listed book.
-* Sample records are typed and explicitly marked as demonstration data.
-* Database persistence, authentication, reviews, recommendations, and loans remain deferred.
+1. Perform browser QA on the bookshelf at desktop and mobile sizes, focusing on cover color sampling, horizontal author stacks, keyboard access, and role-preview behavior.
+2. Fix any issues found in that verification before starting another personal application.
 
-Next Priority 3 work after the catalog is stable:
+Spotify and League dashboards remain future work; do not start them until the current Library build and UX checks are complete.
 
-* Spotify dashboard
-* League dashboard
-* Owner-managed library data and authorization
-* Reviews and recommendations
-* Manual loan requests and approvals
+### Priority 4 — Additional Personal Features
 
-### Priority 4 — Interactive Features
+Later, if requested:
 
-Later:
-
-* Authentication
-* Reviews
-* Recommendations
-* Book loans
-* User accounts
+* Reading analytics and recommendations
+* Expanded loan history and collection organization
 
 ### Priority 5 — Experimental Features
 
@@ -689,6 +683,10 @@ Contains specifications for:
 
 Use for personal/hobby application work.
 
+### [`library.md`](library.md)
+
+Contains the current Library architecture, database and auth boundaries, provider/import behavior, bookshelf interactions, borrowing permissions, and remaining verification work. Use this file as the detailed implementation reference for `/library`.
+
 ### [`portfolio-content.md`](portfolio-content.md)
 
 Contains:
@@ -766,6 +764,8 @@ technical-architecture.md
 design-system.md
 ```
 
+For Library work, also read `library.md`; it is the current source for implemented Library behavior and its remaining work.
+
 ### Major cross-cutting feature
 
 Read:
@@ -806,21 +806,16 @@ Do not proactively implement:
 
 * Spotify OAuth
 * Riot API integration
-* Book authentication
-* User accounts
-* Reviews
-* Book recommendations
-* Book loans
 * AI recommendation systems
+* Social reviews and recommendation features
+* Expanded reading and loan analytics
 * `/now`
 * `/notes`
 * `/lab`
-* Advanced analytics
-* Production database infrastructure
 * Unnecessary cloud infrastructure
 * Unrequested third-party integrations
 
-These are planned features, not current requirements.
+The Library already has accounts and its initial owner-controlled borrowing workflow. These additional features remain future work.
 
 ---
 

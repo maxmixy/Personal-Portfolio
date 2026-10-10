@@ -1,9 +1,13 @@
-import type { BookshelfBook } from "../lib/catalog.display";
-import { getSpineTreatment } from "../lib/catalog.spine";
-import type { FocusEvent, PointerEvent } from "react";
+import { getCoverUrlForSize, type BookshelfBook } from "../lib/catalog.display";
+import { getSpineColorsFromCover, getSpineTreatment, type SpineColors } from "../lib/catalog.spine";
+import type { CSSProperties, FocusEvent, PointerEvent } from "react";
+import Image from "next/image";
 
 interface BookSpineProps {
   book: BookshelfBook;
+  orientation?: "upright" | "horizontal";
+  coverColors?: SpineColors;
+  onCoverColors?: (id: number, colors: SpineColors) => void;
   selected: boolean;
   tabIndex?: number;
   onPointerEnter: (id: number, event: PointerEvent<HTMLButtonElement>) => void;
@@ -16,6 +20,9 @@ interface BookSpineProps {
 
 export default function BookSpine({
   book,
+  orientation,
+  coverColors,
+  onCoverColors,
   selected,
   tabIndex = -1,
   onPointerEnter,
@@ -25,19 +32,22 @@ export default function BookSpine({
   onSelect,
   onOpen,
 }: BookSpineProps) {
-  const treatment = getSpineTreatment(book.title, book.id);
+  const treatment = getSpineTreatment(book.title, book.id, orientation);
+  const coverSamplerSrc = getCoverUrlForSize(book.coverUrl, "S");
+  const spineStyle = {
+    width: `${treatment.width}px`,
+    height: `${treatment.height}px`,
+    background: coverColors?.background ?? treatment.background,
+    color: coverColors?.color ?? treatment.color,
+    "--spine-tilt": treatment.tilt,
+  } as CSSProperties;
 
   return (
     <button
       type="button"
       data-book-id={book.id}
-      className={`book-spine${selected ? " is-selected" : ""}`}
-      style={{
-        width: `${treatment.width}px`,
-        height: `${treatment.height}px`,
-        background: treatment.background,
-        color: treatment.color,
-      }}
+      className={`book-spine is-${treatment.orientation}${selected ? " is-selected" : ""}`}
+      style={spineStyle}
       aria-pressed={selected}
       aria-label={`${book.title} by ${book.authorLabel}. Double-click or press Enter to open details.`}
       tabIndex={tabIndex}
@@ -56,6 +66,20 @@ export default function BookSpine({
     >
       <span className="book-spine-title">{book.title}</span>
       <span className="book-spine-author">{book.authorLabel}</span>
+      {coverSamplerSrc && !coverColors && onCoverColors && (
+        <Image
+          src={coverSamplerSrc}
+          alt=""
+          aria-hidden="true"
+          width={72}
+          height={108}
+          className="book-spine-cover-sampler"
+          onLoad={(event) => {
+            const colors = getSpineColorsFromCover(event.currentTarget);
+            if (colors) onCoverColors(book.id, colors);
+          }}
+        />
+      )}
     </button>
   );
 }

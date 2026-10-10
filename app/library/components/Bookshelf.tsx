@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { BookshelfBook } from "../lib/catalog.display";
-import { getSpineTreatment } from "../lib/catalog.spine";
+import { getSpineTreatment, type SpineColors } from "../lib/catalog.spine";
 import BookPreview from "./BookPreview";
 import BookSpine from "./BookSpine";
 import Shelf from "./Shelf";
@@ -12,24 +12,123 @@ interface BookshelfProps {
   books: BookshelfBook[];
 }
 
-function chunkBooks(books: BookshelfBook[], width: number) {
-  if (width <= 0) return books.length ? [books] : [];
+interface ShelfItem {
+  books: BookshelfBook[];
+  width: number;
+  height: number;
+  stacked: boolean;
+  orientation?: "upright" | "horizontal";
+}
 
-  const availableWidth = Math.max(1, width - 24);
-  const rows: BookshelfBook[][] = [];
-  let row: BookshelfBook[] = [];
-  let rowWidth = 0;
+const STACK_GAP = 6;
+const STACK_SEPARATION = 20;
+
+function getShelfItem(
+  books: BookshelfBook[],
+  orientationOverride?: "upright" | "horizontal",
+): ShelfItem {
+  const stacked = books.length > 1;
+  const treatments = books.map((book) =>
+    getSpineTreatment(book.title, book.id, stacked ? "horizontal" : orientationOverride),
+  );
+  const width = Math.max(...treatments.map((treatment) => treatment.width));
+  const height = treatments.reduce((total, treatment) => total + treatment.height, 0)
+    - STACK_GAP * Math.max(0, treatments.length - 1);
+
+  return {
+    books,
+    width,
+    height,
+    stacked,
+    orientation: stacked ? "horizontal" : orientationOverride,
+  };
+}
+
+function groupHorizontalBooks(books: BookshelfBook[]): ShelfItem[] {
+  const booksByAuthor = new Map<string, BookshelfBook[]>();
 
   for (const book of books) {
-    const spineWidth = getSpineTreatment(book.title, book.id).width;
-    const nextWidth = rowWidth + (row.length ? 4 : 0) + spineWidth;
+    const authorKey = book.authors[0]?.trim().toLowerCase();
+    if (!authorKey) continue;
+    const group = booksByAuthor.get(authorKey) ?? [];
+    group.push(book);
+    booksByAuthor.set(authorKey, group);
+  }
+
+  const stackByBookId = new Map<number, BookshelfBook[]>();
+  for (const group of booksByAuthor.values()) {
+    if (group.length < 2 || !group.some((book) => getSpineTreatment(book.title, book.id).orientation === "horizontal")) {
+      continue;
+    }
+    for (const book of group) stackByBookId.set(book.id, group);
+  }
+
+  const addedStackIds = new Set<number>();
+  const items: ShelfItem[] = [];
+  for (const book of books) {
+    const stack = stackByBookId.get(book.id);
+    if (!stack) {
+      items.push(getShelfItem([book]));
+      continue;
+    }
+    if (addedStackIds.has(book.id)) continue;
+    items.push(getShelfItem(stack));
+    for (const stackedBook of stack) addedStackIds.add(stackedBook.id);
+  }
+  return items;
+}
+
+function separateHorizontalStacks(items: ShelfItem[]): ShelfItem[] {
+  const separated = [...items];
+
+  for (let index = 0; index < separated.length - 1; index += 1) {
+    if (!separated[index].stacked || !separated[index + 1].stacked) continue;
+
+    const uprightIndex = separated.findIndex((item, itemIndex) =>
+      itemIndex > index + 1 && !item.stacked && item.books.length === 1,
+    );
+
+    if (uprightIndex >= 0) {
+      const [uprightBook] = separated.splice(uprightIndex, 1);
+      separated.splice(index + 1, 0, getShelfItem(uprightBook.books, "upright"));
+      continue;
+    }
+
+    const nextStack = separated[index + 1];
+    const [uprightBook, ...remainingBooks] = nextStack.books;
+    separated[index + 1] = getShelfItem(
+      remainingBooks,
+      remainingBooks.length === 1 ? "upright" : undefined,
+    );
+    separated.splice(index + 1, 0, getShelfItem([uprightBook], "upright"));
+  }
+
+  return separated;
+}
+
+function chunkBooks(books: BookshelfBook[], width: number) {
+  const items = separateHorizontalStacks(groupHorizontalBooks(books));
+  if (width <= 0) return items.length ? [items] : [];
+
+  const availableWidth = Math.max(1, width - 24);
+  const rows: ShelfItem[][] = [];
+  let row: ShelfItem[] = [];
+  let rowWidth = 0;
+
+  for (const item of items) {
+    const adjacentStackGap = row[row.length - 1]?.stacked && item.stacked ? STACK_SEPARATION : 0;
+    const itemGap = (row.length ? 4 : 0) + adjacentStackGap;
+    const nextWidth = rowWidth + itemGap + item.width;
     if (row.length && nextWidth > availableWidth) {
       rows.push(row);
       row = [];
       rowWidth = 0;
     }
-    rowWidth += (row.length ? 4 : 0) + spineWidth;
-    row.push(book);
+    const gapBefore = row.length
+      ? 4 + (row[row.length - 1].stacked && item.stacked ? STACK_SEPARATION : 0)
+      : 0;
+    rowWidth += gapBefore + item.width;
+    row.push(item);
   }
   if (row.length) rows.push(row);
   return rows;
@@ -40,6 +139,7 @@ export default function Bookshelf({ books }: BookshelfProps) {
   const [activeId, setActiveId] = useState<number | null>(books[0]?.id ?? null);
   const [shelfWidth, setShelfWidth] = useState(0);
   const [previewPosition, setPreviewPosition] = useState<{ left: number; top: number } | null>(null);
+  const [coverColors, setCoverColors] = useState<Record<number, SpineColors>>({});
   const bookshelfRef = useRef<HTMLDivElement>(null);
   const previewElementRef = useRef<HTMLElement | null>(null);
   const desktopPreviewElementRef = useRef<HTMLElement | null>(null);
@@ -143,6 +243,10 @@ export default function Bookshelf({ books }: BookshelfProps) {
     if (book) router.push(`/library/${book.slug}`);
   }, [books, router]);
 
+  const handleCoverColors = useCallback((id: number, colors: SpineColors) => {
+    setCoverColors((current) => current[id] ? current : { ...current, [id]: colors });
+  }, []);
+
   function moveSelection(delta: number) {
     if (!spineIds.length || selectedId === null) {
       return;
@@ -178,12 +282,56 @@ export default function Bookshelf({ books }: BookshelfProps) {
       >
         {shelves.map((shelf, index) => (
           <Shelf key={index} label={`Shelf ${index + 1}`}>
-            {shelf.map((book) => (
-              <div key={book.id} role="listitem">
+            {shelf.map((item) => item.stacked ? (
+              <div
+                key={`stack-${item.books[0].id}`}
+                className="book-horizontal-stack"
+                role="listitem"
+                aria-label={`${item.books.length} books by ${item.books[0].authorLabel}`}
+                style={{ width: `${item.width}px`, height: `${item.height}px` }}
+              >
+                {item.books.map((book, stackIndex) => {
+                  const treatment = getSpineTreatment(book.title, book.id, "horizontal");
+                  const bottom = item.books.slice(0, stackIndex).reduce((height, lowerBook) => {
+                    return height + getSpineTreatment(lowerBook.title, lowerBook.id, "horizontal").height - STACK_GAP;
+                  }, 0);
+                  return (
+                    <div
+                      key={book.id}
+                      className="book-horizontal-stack-layer"
+                      style={{
+                        width: `${treatment.width}px`,
+                        height: `${treatment.height}px`,
+                        bottom: `${bottom}px`,
+                      }}
+                    >
+                      <BookSpine
+                        book={book}
+                        orientation="horizontal"
+                        coverColors={coverColors[book.id]}
+                        onCoverColors={handleCoverColors}
+                        selected={book.id === selectedId}
+                        tabIndex={book.id === selectedId ? 0 : -1}
+                        onPointerEnter={updatePreviewAtPointer}
+                        onPointerMove={updatePreviewAtPointer}
+                        onPointerDown={handleSpinePointerDown}
+                        onFocus={handleSpineFocus}
+                        onSelect={setActiveId}
+                        onOpen={openBook}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div key={item.books[0].id} role="listitem">
                 <BookSpine
-                  book={book}
-                  selected={book.id === selectedId}
-                  tabIndex={book.id === selectedId ? 0 : -1}
+                  book={item.books[0]}
+                  orientation={item.orientation}
+                  coverColors={coverColors[item.books[0].id]}
+                  onCoverColors={handleCoverColors}
+                  selected={item.books[0].id === selectedId}
+                  tabIndex={item.books[0].id === selectedId ? 0 : -1}
                   onPointerEnter={updatePreviewAtPointer}
                   onPointerMove={updatePreviewAtPointer}
                   onPointerDown={handleSpinePointerDown}

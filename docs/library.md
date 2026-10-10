@@ -16,7 +16,7 @@ Primary routes:
 
 ## Current status
 
-The owner confirmed the live database migrations, provider search/import, account setup, and borrowing lifecycle on 2026-10-10. This terminal cannot independently connect to Neon. The most recent production build attempt could not download Geist fonts from Google Fonts; rerun the build in an environment with access or after self-hosting those fonts.
+The owner confirmed the live database migrations, provider search/import, account setup, and borrowing lifecycle on 2026-10-10. Geist Sans and Geist Mono are self-hosted under the SIL Open Font License, removing the Google Fonts build-time dependency. The production build passed after this change; this terminal cannot independently connect to Neon.
 
 Implemented:
 
@@ -74,6 +74,8 @@ Provider requests are server-side, bounded, cached where appropriate, and indepe
 ## Bookshelf interaction and accessibility
 
 - Render the collection as book spines, with rows sized to the available container width and no unintended horizontal page overflow.
+- Give each book a stable, title-derived visual treatment: most stand upright with slight varied tilt, while occasional books lie horizontally. When a horizontal book has other entries by the same primary author, gather those editions into a clickable pile and include the pile's full footprint in row packing. Keep vertical books between piles, reusing another upright catalog book where possible. Add inline spacing between piles; wrap only when the shelf runs out of room.
+- When cover art is available, sample its average color for the book spine and choose a contrasting text color. Keep the stable palette fallback for missing or unreadable covers.
 - Search and reading-status filters compose with sorting by title, author, or rating.
 - Desktop hover and keyboard focus show a preview beside the cursor or focused spine. The card is viewport-bounded and sized dynamically.
 - On touch screens, tapping a spine selects it and scrolls its preview above the shelves. Tapping that same spine again quickly opens its detail page.
@@ -99,7 +101,7 @@ Treat the library as a personal collection, not a bookstore. Follow the portfoli
 
 ## Verification and remaining work
 
-The owner confirmed live database and workflow checks. Focused provider/library tests, TypeScript, and ESLint were reported passing during the implementation work. The production build remains to be rerun where Geist font downloads succeed (or after the fonts are self-hosted).
+The owner confirmed live database and workflow checks. Focused provider/library tests, TypeScript, and ESLint were reported passing during the implementation work. The production build passed with locally hosted Geist fonts. Next, do desktop and mobile browser QA for cover color sampling, horizontal author stacks, keyboard interactions, and role previews.
 
 Before changing persistence or auth, inspect the Drizzle schema and migrations. For provider changes, preserve the normalized candidate model and duplicate rules above. Do not apply migrations to a live database without an explicit task to do so.
 
