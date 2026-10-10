@@ -8,6 +8,21 @@ const nextConfig: NextConfig = {
         hostname: "images.credly.com",
         pathname: "/images/**",
       },
+      {
+        protocol: "https",
+        hostname: "covers.openlibrary.org",
+        pathname: "/b/**",
+      },
+      {
+        protocol: "https",
+        hostname: "books.google.com",
+        pathname: "/books/**",
+      },
+      {
+        protocol: "https",
+        hostname: "books.googleusercontent.com",
+        pathname: "/**",
+      },
     ],
   },
 };

@@ -39,31 +39,44 @@ The portfolio itself should demonstrate engineering ability rather than simply d
 
 ## 2. Current Development Phase
 
-**Phase:** Core Portfolio
+**Phase:** Personal applications / Priority 3
 
-**Current priority:** Build the remaining professional routes on the shared design system. The next route is `/contact`.
+**Current priority:** The data-backed Library catalog, accounts, and core borrowing workflow are implemented. Complete production-build verification and continue focused bookshelf usability refinement before starting another personal application.
 
 ### Current objectives
 
-* Refine reusable UI components.
-* Establish consistent design tokens.
-* Keep the visual system cohesive across future pages.
-* Test components through the component development environment.
-* Build portfolio pages incrementally, adding case studies when verified project details are available.
-* Maintain responsive behavior and accessibility.
-* Avoid premature abstraction.
+* Keep the live, database-backed library catalog reliable and accessible.
+* Verify the production build and current bookshelf behavior across responsive breakpoints.
+* Preserve the separation between external bibliographic metadata, local personal data, authentication, and loan records.
+* Use the existing portfolio shell and design tokens.
+* Preserve the completed professional portfolio and Vercel Analytics integration.
+* Defer recommendations and analytics until the existing catalog experience is fully verified.
 
 ### Current development principle
 
 > Quality and completion are more important than feature count.
 
-Do not begin personal dashboard integrations or experimental functionality while core portfolio functionality remains incomplete unless explicitly requested.
+The Library is an owner-managed catalog with borrower accounts and owner-controlled loans. Spotify OAuth, Riot integration, recommendations, and reading analytics remain future work.
 
 ---
 
 ## 3. Current Implementation
 
-The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional.
+The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional. Priority 3 includes a persistent Library catalog at `/library`, database-backed detail pages at `/library/[slug]`, account management, and the core borrowing workflow.
+
+### Library currently includes
+
+* Neon PostgreSQL catalog persistence with edition-aware identity, authors, reading state, ratings, notes, reviews, and availability
+* Open Library and Google Books search with normalized candidates, edition review, bulk import, and per-query result pagination
+* Duplicate-safe transactional imports and provider identifiers stored separately
+* Responsive bookshelf with width-based shelf packing, title-derived spine variation, sampled cover colors, and upright separators between horizontal author stacks
+* Search, status filters, sorting, keyboard navigation, desktop hover/focus previews, mobile tap previews, and detail navigation
+* Database-backed `/library/[slug]` detail pages with provider references
+* Neon Managed Better Auth email/password accounts with code-based verification
+* Borrower requests and owner-managed rejection, approval, reservation, handover, and return workflow
+* Owner-only preview controls for public, borrower, and owner views; server authorization remains tied to the real session
+* Owner-confirmed live database, provider, auth, and borrowing checks (2026-10-10)
+* Geist Sans and Geist Mono are now self-hosted under the SIL Open Font License; the production build passed after removing the Google Fonts build-time dependency
 
 ### Homepage currently includes
 
@@ -178,7 +191,9 @@ app/components/
 └── ComponentSheet.tsx
 ```
 
-The shared components now use the active palette tokens. The button has a visible focus treatment, project cards support optional case-study and external repository links, and shared navigation/footer components are used on the homepage, About page, and component sheet. The container uses the homepage's page-width token.
+The shared components now use the active palette tokens. The button has a visible focus treatment, project cards support optional case-study and external repository links, and shared navigation/footer components are used throughout the core portfolio. The container uses the homepage's page-width token.
+
+The root layout also includes Vercel Analytics through `@vercel/analytics/next`. This is an active production integration, not a placeholder or an unused import.
 
 ### Component development route
 
@@ -315,9 +330,18 @@ Geist and Geist Mono are loaded by `app/layout.tsx`; the global body now uses th
 
 ## 7. Planned Core Routes
 
-Implemented professional routes: `/`, `/about`, `/projects`, `/projects/waste-to-worth`, `/experience`, `/skills`, `/achievements`, and `/contact`.
+Implemented professional routes: `/`, `/about`, `/projects`, `/projects/waste-to-worth`, `/experience`, `/skills`, `/achievements`, `/contact`, and the `/components` development sheet.
 
-The dynamic `/projects/[slug]` route currently generates only the Waste-To-Worth case study. Add further slugs when their project details are verified.
+The dynamic `/projects/[slug]` route currently generates the verified Waste-To-Worth case study. Add further slugs only when their project details are verified.
+
+Implemented Priority 3 routes:
+
+```text
+/library
+/library/[slug]
+```
+
+The Library routes use the local database for canonical ownership, personal metadata, availability, and loan records. External providers supply bibliographic search candidates only.
 
 Remaining professional portfolio routes:
 
@@ -330,8 +354,6 @@ Personal/interest routes:
 ```text
 /music
 /league
-/library
-/library/[slug]
 ```
 
 Future/experimental routes:
@@ -348,50 +370,39 @@ Do not implement future routes unless they are explicitly part of the current ta
 
 ## 8. Immediate Development Priority
 
-### Priority 1 — Component System
+### Priority 1 — Final Quality and Verification
 
-Maintain and refine as new pages expose real needs:
+The core portfolio routes are implemented. The current path is to keep the site production-ready rather than add speculative routes:
 
-* Design tokens
-* Typography
-* Buttons
-* Badges
-* Section headings
-* Cards
-* Containers
-* Navigation
-* Footer
-* Responsive behavior
-* Interactive states
-* Accessibility states
+* Run full lint and production-build validation.
+* Verify the homepage, core routes, dynamic project route, achievements, and contact page over HTTP.
+* Check responsive behavior and accessibility behavior at the relevant breakpoints.
+* Confirm the Credly and TOPCIT content provides meaningful fallback and verification behavior.
+* Review the final diff so only intended project changes remain.
 
-Use `/components` to test reusable UI.
+Use `/components` to inspect reusable UI before making any additional composition changes.
 
-The shared palette alignment and reusable Container/Navbar/Footer integration on the homepage and component sheet were completed on 2026-10-03. Navigation targets implemented sections and routes. Repository lint and production build pass; the shared shell was checked at 320px with no horizontal overflow.
+### Priority 2 — Content and Quality Refinement
 
-### Priority 2 — Core Portfolio Pages
-
-The current core-route list is implemented. Continue with content refinement, then reassess priorities before starting personal applications.
+Keep improving content only where evidence is available. Reassess personal applications only after the professional portfolio has passed its final verification.
 
 The order may change when dependencies make another sequence more practical.
 
 ### Priority 3 — Personal Applications
 
-Only after the professional portfolio foundation is sufficiently complete:
+The Library catalog, account system, and initial borrowing lifecycle are implemented. Recommended next work:
 
-* Spotify dashboard
-* League dashboard
-* Book library
+1. Perform browser QA on the bookshelf at desktop and mobile sizes, focusing on cover color sampling, horizontal author stacks, keyboard access, and role-preview behavior.
+2. Fix any issues found in that verification before starting another personal application.
 
-### Priority 4 — Interactive Features
+Spotify and League dashboards remain future work; do not start them until the current Library build and UX checks are complete.
 
-Later:
+### Priority 4 — Additional Personal Features
 
-* Authentication
-* Reviews
-* Recommendations
-* Book loans
-* User accounts
+Later, if requested:
+
+* Reading analytics and recommendations
+* Expanded loan history and collection organization
 
 ### Priority 5 — Experimental Features
 
@@ -672,6 +683,10 @@ Contains specifications for:
 
 Use for personal/hobby application work.
 
+### [`library.md`](library.md)
+
+Contains the current Library architecture, database and auth boundaries, provider/import behavior, bookshelf interactions, borrowing permissions, and remaining verification work. Use this file as the detailed implementation reference for `/library`.
+
 ### [`portfolio-content.md`](portfolio-content.md)
 
 Contains:
@@ -749,6 +764,8 @@ technical-architecture.md
 design-system.md
 ```
 
+For Library work, also read `library.md`; it is the current source for implemented Library behavior and its remaining work.
+
 ### Major cross-cutting feature
 
 Read:
@@ -789,21 +806,16 @@ Do not proactively implement:
 
 * Spotify OAuth
 * Riot API integration
-* Book authentication
-* User accounts
-* Reviews
-* Book recommendations
-* Book loans
 * AI recommendation systems
+* Social reviews and recommendation features
+* Expanded reading and loan analytics
 * `/now`
 * `/notes`
 * `/lab`
-* Advanced analytics
-* Production database infrastructure
 * Unnecessary cloud infrastructure
 * Unrequested third-party integrations
 
-These are planned features, not current requirements.
+The Library already has accounts and its initial owner-controlled borrowing workflow. These additional features remain future work.
 
 ---
 
