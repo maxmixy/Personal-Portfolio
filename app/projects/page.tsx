@@ -5,6 +5,7 @@ import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
 import ProjectCard from "../components/projects/ProjectCard";
 import SectionHeading from "../components/ui/SectionHeading";
+import { ballCenterImages, wasteToWorthImages } from "../components/ui/slideshow-images";
 
 export const metadata: Metadata = {
   title: "Projects | Yuri Morrison",
@@ -64,6 +65,7 @@ export default function ProjectsPage() {
                 ]}
                 href="/projects/waste-to-worth"
                 repositoryUrl="https://github.com/maxmixy/mob-waste-worth"
+                images={wasteToWorthImages}
                 featured
               />
 
@@ -71,6 +73,7 @@ export default function ProjectsPage() {
                 title="Real-Time Basketball Management System"
                 description="A web-based basketball system with player registration, team and player statistics, and game and bracket views."
                 technologies={["HTML", "PHP", "SQL"]}
+                images={ballCenterImages}
                 repositoryUrl="https://github.com/maxmixy/BasketBallPage"
               />
 

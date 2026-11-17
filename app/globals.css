@@ -473,6 +473,122 @@ a:focus-visible {
   animation: rise-in 760ms 100ms both;
 }
 
+.hero-portrait-panel {
+  margin-top: 17px;
+}
+
+.hero-profile-visual .image-slideshow-caption,
+.hero-profile-visual .image-slideshow-controls {
+  color: #a6b4a6;
+}
+
+.hero-profile-visual .image-slideshow-count {
+  color: #a6b4a6;
+}
+
+.hero-profile-visual .image-slideshow-navigation button,
+.hero-profile-visual .image-slideshow-play {
+  border-color: #708378;
+  color: var(--paper);
+}
+
+.hero-profile-visual .image-slideshow-dots button {
+  border-color: #a6b4a6;
+}
+
+.hero-profile-caption {
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.image-slideshow {
+  min-width: 0;
+}
+
+.image-slideshow-frame {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+
+.image-slideshow-image {
+  transition: opacity 220ms ease;
+}
+
+.image-slideshow-caption,
+.image-slideshow-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.image-slideshow-caption {
+  min-height: 34px;
+  padding-top: 9px;
+}
+
+.image-slideshow-count {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font: 10px var(--font-geist-mono), monospace;
+}
+
+.image-slideshow-controls {
+  flex-wrap: wrap;
+  padding-top: 7px;
+}
+
+.image-slideshow-navigation,
+.image-slideshow-dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.image-slideshow-navigation button,
+.image-slideshow-play {
+  min-height: 32px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 10px;
+  transition: border-color 160ms ease, color 160ms ease;
+}
+
+.image-slideshow-navigation button:hover,
+.image-slideshow-play:hover:not(:disabled) {
+  border-color: var(--ink);
+  color: var(--coral);
+}
+
+.image-slideshow-dots button {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 1px solid var(--muted);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.image-slideshow-dots button.is-active {
+  border-color: var(--coral);
+  background: var(--coral);
+}
+
+.image-slideshow button:focus-visible {
+  outline: 2px solid var(--coral);
+  outline-offset: 3px;
+}
+
+.image-slideshow button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .visual-topline,
 .visual-bottomline {
   display: flex;
@@ -1352,6 +1468,7 @@ a:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .image-slideshow-image { transition: none; }
   *, *::before, *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;

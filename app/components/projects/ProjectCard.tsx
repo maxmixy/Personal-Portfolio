@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Badge from "../ui/Badge";
+import ImageSlideshow, { type SlideshowImage } from "../ui/ImageSlideshow";
 
 interface ProjectCardProps {
   title: string;
@@ -9,6 +10,7 @@ interface ProjectCardProps {
   href?: string;
   repositoryUrl?: string;
   image?: string;
+  images?: SlideshowImage[];
   featured?: boolean;
 }
 
@@ -19,6 +21,7 @@ export default function ProjectCard({
   href,
   repositoryUrl,
   image,
+  images,
   featured = false,
 }: ProjectCardProps) {
   const cardContent = (
@@ -53,16 +56,25 @@ export default function ProjectCard({
 
   return (
     <article className="group overflow-hidden border border-[var(--line)] bg-[var(--paper)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--ink)]">
-      {image && (
+      {images && images.length > 1 ? (
+        <ImageSlideshow
+          images={images}
+          label={`${title} image gallery`}
+          aspectRatio="3 / 2"
+          fit="contain"
+          sizes="(max-width: 768px) 100vw, 50vw"
+        />
+      ) : image ? (
         <div className="relative aspect-[3/2] overflow-hidden bg-[var(--paper-deep)]">
           <Image
             src={image}
-            alt={title}
+            alt={`${title} project interface`}
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
           />
         </div>
-      )}
+      ) : null}
 
       <div className="p-6 md:p-7">
         {href && (

@@ -6,6 +6,8 @@ import Container from "../../components/layout/Container";
 import Footer from "../../components/layout/Footer";
 import Navbar from "../../components/layout/Navbar";
 import SectionHeading from "../../components/ui/SectionHeading";
+import ImageSlideshow from "../../components/ui/ImageSlideshow";
+import { wasteToWorthImages } from "../../components/ui/slideshow-images";
 
 export const metadata: Metadata = {
   title: "Waste-To-Worth | Project Case Study",
@@ -120,6 +122,16 @@ export default async function ProjectCaseStudy({
               </div>
             </div>
           </section>
+
+          <div className="my-4 border border-[var(--line)] bg-[var(--paper)] p-3 md:my-8 md:p-5">
+            <ImageSlideshow
+              images={wasteToWorthImages}
+              label="Waste-To-Worth application screenshots"
+              aspectRatio="16 / 9"
+              fit="contain"
+              sizes="(max-width: 768px) 100vw, 1100px"
+            />
+          </div>
 
           <section className="section-band -mx-6 px-6 py-12 md:-mx-10 md:px-10 md:py-16 lg:-mx-12 lg:px-12" aria-labelledby="problem-title">
             <Container className="!w-full !max-w-none !px-0">

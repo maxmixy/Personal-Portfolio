@@ -3,7 +3,9 @@ import Link from "next/link";
 import Container from "../components/layout/Container";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
+import ImageSlideshow from "../components/ui/ImageSlideshow";
 import SectionHeading from "../components/ui/SectionHeading";
+import { nosediveImages, profileImages } from "../components/ui/slideshow-images";
 
 export const metadata: Metadata = {
   title: "About Yuri Morrison | Software & AI Engineer",
@@ -54,6 +56,16 @@ export default function AboutPage() {
                 </Link>
               </div>
             </div>
+          </div>
+
+          <div className="mt-10 max-w-[420px] border-t border-[var(--line)] pt-8">
+            <ImageSlideshow
+              images={profileImages}
+              label="Yuri Morrison photo gallery"
+              aspectRatio="4 / 5"
+              fit="cover"
+              sizes="(max-width: 768px) 85vw, 420px"
+            />
           </div>
 
           <div className="mt-16 grid border-y border-[var(--line)] md:grid-cols-3">
@@ -168,6 +180,14 @@ export default function AboutPage() {
               speakers around practical conversations, turning an idea into a
               program that could continue across teams.
             </p>
+            <ImageSlideshow
+              images={nosediveImages}
+              label="NOSEDIVE event graphics"
+              aspectRatio="4 / 3"
+              fit="contain"
+              sizes="(max-width: 768px) 85vw, 380px"
+              className="mt-7 max-w-sm"
+            />
           </article>
         </section>
 

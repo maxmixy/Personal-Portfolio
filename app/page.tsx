@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
+import ImageSlideshow from "./components/ui/ImageSlideshow";
+import { profileImages } from "./components/ui/slideshow-images";
 
 export default function Home() {
   return (
@@ -27,35 +29,22 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hero-visual" aria-label="Waste-to-Worth material recognition project results">
+          <div className="hero-visual hero-profile-visual" aria-label="Portrait of Yuri Morrison">
             <div className="visual-topline">
-              <span>FIELD NOTES / 001</span>
-              <span>WASTE-TO-WORTH</span>
+              <span>PROFILE / 001</span>
+              <span>YURI MORRISON</span>
             </div>
-            <div className="scan-panel">
-              <div className="scan-grid" aria-hidden="true" />
-              <div className="scan-object" aria-hidden="true">
-                <span className="bottle-cap" />
-                <span className="bottle-neck" />
-                <span className="bottle-body" />
-                <span className="bottle-label" />
-              </div>
-              <span className="scan-corner corner-tl" />
-              <span className="scan-corner corner-tr" />
-              <span className="scan-corner corner-bl" />
-              <span className="scan-corner corner-br" />
-              <span className="scan-crosshair" aria-hidden="true">+</span>
-              <div className="scan-caption"><span>INPUT / 014</span><span>POLYMER · PET</span></div>
-            </div>
-            <div className="result-line">
-              <div>
-                <p className="result-label">Pilot classification rate</p>
-                <p className="result-detail">117 successful results / 136 scans</p>
-              </div>
-              <p className="result-number">86<span>%</span></p>
-            </div>
-            <div className="visual-bottomline">
-              <span>RECOGNIZE</span><i /><span>RECOMMEND</span><i /><span>REUSE</span>
+            <ImageSlideshow
+              images={profileImages}
+              label="Yuri Morrison photo gallery"
+              aspectRatio="4 / 5"
+              fit="cover"
+              sizes="(max-width: 640px) 90vw, (max-width: 900px) 42vw, 38vw"
+              priority
+              className="hero-portrait-panel"
+            />
+            <div className="visual-bottomline hero-profile-caption">
+              <span>SOFTWARE / AI ENGINEER</span><i /><span>BUILD · CONNECT · COMMUNICATE</span>
             </div>
           </div>
           <div className="hero-side-note">BUILDING AT THE INTERSECTION<br />OF PEOPLE & SYSTEMS</div>

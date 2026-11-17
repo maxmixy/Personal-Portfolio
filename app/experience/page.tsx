@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import Badge from "../components/ui/Badge";
 import Container from "../components/layout/Container";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
+import ImageSlideshow from "../components/ui/ImageSlideshow";
 import SectionHeading from "../components/ui/SectionHeading";
+import { nosediveImages } from "../components/ui/slideshow-images";
 
 export const metadata: Metadata = {
   title: "Experience | Yuri Morrison",
@@ -152,6 +155,14 @@ export default function ExperiencePage() {
                   <Badge>Team coordination</Badge>
                   <Badge>Continuity</Badge>
                 </div>
+                <ImageSlideshow
+                  images={nosediveImages}
+                  label="NOSEDIVE event graphics"
+                  aspectRatio="4 / 3"
+                  fit="contain"
+                  sizes="(max-width: 768px) 85vw, 380px"
+                  className="mt-7 max-w-sm"
+                />
               </div>
             </div>
           </Container>
@@ -180,6 +191,19 @@ export default function ExperiencePage() {
               <Badge>Research</Badge>
               <Badge>Technical communication</Badge>
             </div>
+            <figure className="mt-7 max-w-xl">
+              <Image
+                src="/yuri/Morrison, Yuri Andrei Buenaventura_2943.jpg"
+                alt="Bedan Herald staff members wearing PRESS shirts"
+                width={3712}
+                height={5568}
+                sizes="(max-width: 768px) 90vw, 600px"
+                className="max-h-[440px] w-full object-cover object-center"
+              />
+              <figcaption className="mt-2 text-xs leading-5 text-[var(--ink-soft)]">
+                Bedan Herald press team.
+              </figcaption>
+            </figure>
           </div>
         </section>
 
