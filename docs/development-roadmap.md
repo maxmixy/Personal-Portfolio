@@ -61,9 +61,7 @@ Implement `/about`, `/projects`, `/projects/[slug]`, `/experience`, `/skills`, `
 
 ### Phase 3: Spotify
 
-The current Spotify implementation is a public dashboard of the owner's Spotify data. Visitors do not authorize Spotify. See [personal-apps.md](personal-apps.md) for the owner setup, database migration, refresh, and privacy boundary.
-
-Implement OAuth, server-only credentials, top artists/tracks, recently played, optional currently playing, attribution, caching, and failure states.
+The Spotify source implementation now includes the owner's top tracks and artists, recently played tracks, and currently playing status. Visitors do not authorize Spotify. Remaining setup is to apply the activity-cache migration, reconnect the owner account for the added read scopes, and verify the live data flow. See [personal-apps.md](personal-apps.md) for setup, database migration, refresh, and privacy details.
 
 ### Phase 4: League
 

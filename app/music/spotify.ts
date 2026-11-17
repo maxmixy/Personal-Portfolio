@@ -3,15 +3,18 @@ import "server-only";
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:crypto";
 import { Pool } from "pg";
 
-export const spotifyScopes = ["user-top-read"] as const;
+export const spotifyScopes = ["user-top-read", "user-read-recently-played", "user-read-currently-playing"] as const;
 export const spotifyStateCookie = "spotify_oauth_state";
 export const publicCacheMaxAgeMs = 10 * 60 * 1000;
 export const publicCacheMaxStaleMs = 7 * 24 * 60 * 60 * 1000;
+export const activityCacheMaxAgeMs = 20 * 1000;
+export const activityCacheMaxStaleMs = 10 * 60 * 1000;
 
 export type SpotifyTokens = {
   accessToken: string;
   refreshToken: string;
   expiresAt: number;
+  scopes?: string[];
 };
 
 export type SpotifyTopItem = {
@@ -27,6 +30,20 @@ export type SpotifyDashboardData = {
   updatedAt: string;
   tracks: SpotifyTopItem[];
   artists: SpotifyTopItem[];
+};
+
+export type SpotifyActivityTrack = SpotifyTopItem & {
+  playedAt?: string;
+  progressMs?: number | null;
+  durationMs?: number | null;
+};
+
+export type SpotifyActivityData = {
+  updatedAt: string;
+  currentlyPlaying: SpotifyActivityTrack | null;
+  recentlyPlayed: SpotifyActivityTrack[];
+  stale?: boolean;
+  errors?: { currentlyPlaying?: "unavailable" | "rate_limited" | "permission_denied"; recentlyPlayed?: "unavailable" | "rate_limited" | "permission_denied" };
 };
 
 type OwnerTokens = SpotifyTokens;
@@ -68,6 +85,7 @@ export function unsealTokens(value: string, secret: string): SpotifyTokens | nul
     const result = Buffer.concat([decipher.update(Buffer.from(encryptedText, "base64url")), decipher.final()]).toString("utf8");
     const parsed = JSON.parse(result) as Partial<SpotifyTokens>;
     if (typeof parsed.accessToken !== "string" || typeof parsed.refreshToken !== "string" || typeof parsed.expiresAt !== "number") return null;
+    if (parsed.scopes !== undefined && (!Array.isArray(parsed.scopes) || parsed.scopes.some((scope) => typeof scope !== "string"))) return null;
     return parsed as SpotifyTokens;
   } catch {
     return null;
@@ -115,11 +133,31 @@ export async function savePublicDashboard(data: SpotifyDashboardData) {
 }
 
 export async function clearPublicDashboard() {
-  await getSpotifyDatabase().query("DELETE FROM public.spotify_dashboard_cache");
+  await Promise.all([
+    getSpotifyDatabase().query("DELETE FROM public.spotify_dashboard_cache"),
+    getSpotifyDatabase().query("DELETE FROM public.spotify_activity_cache"),
+  ]);
 }
 
 export async function deletePublicDashboard(range: string) {
   await getSpotifyDatabase().query("DELETE FROM public.spotify_dashboard_cache WHERE time_range = $1", [range]);
+}
+
+export async function readPublicActivity() {
+  const result = await getSpotifyDatabase().query<{ payload: SpotifyActivityData; updated_at: Date }>(
+    "SELECT payload, updated_at FROM public.spotify_activity_cache WHERE id = 1 LIMIT 1",
+  );
+  const row = result.rows[0];
+  return row ? { ...row.payload, updatedAt: row.updated_at.toISOString() } : null;
+}
+
+export async function savePublicActivity(data: SpotifyActivityData) {
+  await getSpotifyDatabase().query(
+    `INSERT INTO public.spotify_activity_cache (id, payload, updated_at)
+     VALUES (1, $1::jsonb, now())
+     ON CONFLICT (id) DO UPDATE SET payload = EXCLUDED.payload, updated_at = now()`,
+    [JSON.stringify({ currentlyPlaying: data.currentlyPlaying, recentlyPlayed: data.recentlyPlayed, errors: data.errors })],
+  );
 }
 
 type SpotifyArtistRecord = { name?: string };
@@ -129,6 +167,7 @@ type SpotifyTrackRecord = {
   external_urls?: { spotify?: string };
   album?: { images?: { url: string }[] };
   artists?: SpotifyArtistRecord[];
+  duration_ms?: number;
 };
 type SpotifyArtistProfile = {
   id?: string;
@@ -145,6 +184,15 @@ export function normalizeTrack(track: SpotifyTrackRecord): SpotifyTopItem {
     url: track.external_urls?.spotify ?? "https://open.spotify.com",
     image: track.album?.images?.[0]?.url ?? null,
     subtitle: (track.artists ?? []).map((artist) => artist.name).filter(Boolean).join(", "),
+  };
+}
+
+export function normalizeActivityTrack(track: SpotifyTrackRecord, extra: { playedAt?: string; progressMs?: number | null } = {}): SpotifyActivityTrack {
+  return {
+    ...normalizeTrack(track),
+    playedAt: extra.playedAt,
+    progressMs: extra.progressMs,
+    durationMs: typeof track.duration_ms === "number" ? track.duration_ms : null,
   };
 }
 

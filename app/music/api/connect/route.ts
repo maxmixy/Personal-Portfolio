@@ -23,6 +23,7 @@ export async function POST(request: Request) {
     client_id: config.clientId,
     redirect_uri: config.redirectUri,
     scope: spotifyScopes.join(" "),
+    show_dialog: "true",
     state,
   }).toString();
 

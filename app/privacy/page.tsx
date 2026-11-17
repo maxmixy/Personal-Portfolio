@@ -15,21 +15,21 @@ export default function PrivacyPage() {
       <main className="page-width privacy-page">
         <p className="eyebrow">Policy / Privacy</p>
         <h1>Spotify data on this site</h1>
-        <p className="privacy-updated">Last updated: October 10, 2026</p>
+        <p className="privacy-updated">Last updated: October 22, 2026</p>
 
         <section>
           <h2>Whose data is shown</h2>
-          <p>The <Link href="/music">Music page</Link> displays the site owner’s Spotify top tracks and artists. Visitors do not connect Spotify accounts, and this site does not request or collect visitors’ Spotify listening data.</p>
+          <p>The <Link href="/music">Music page</Link> displays the site owner’s Spotify top tracks, artists, recently played tracks, and currently playing status. Visitors do not connect Spotify accounts, and this site does not request or collect visitors’ Spotify listening data.</p>
         </section>
 
         <section>
           <h2>What Spotify data is used</h2>
-          <p>With the owner’s authorization, the site requests Spotify’s <code>user-top-read</code> permission to retrieve top tracks and artists for short-, medium-, and long-term periods. Track and artist names, Spotify links, artist genres, and Spotify-provided artwork are shown on the Music page.</p>
+          <p>With the owner’s authorization, the site requests Spotify’s <code>user-top-read</code>, <code>user-read-recently-played</code>, and <code>user-read-currently-playing</code> permissions. Track and artist names, Spotify links, artist genres, play times, current playback status, and Spotify-provided artwork may be shown on the Music page.</p>
         </section>
 
         <section>
           <h2>Storage and publication</h2>
-          <p>The owner’s access and refresh tokens are encrypted before being stored in the site’s Neon database. They are used only by the server and are never sent to visitors’ browsers. Public snapshots of the selected tracks and artists are stored temporarily in the same database and may be viewed by anyone visiting the Music page. Snapshots are refreshed periodically when requested and are removed when the owner disconnects Spotify.</p>
+          <p>The owner’s access and refresh tokens are encrypted before being stored in the site’s Neon database. They are used only by the server and are never sent to visitors’ browsers. Public snapshots of top tracks and artists, recently played tracks and play times, and a short-lived currently playing status are stored temporarily in the same database and may be viewed by anyone visiting the Music page. Top-item snapshots refresh when requested; activity is refreshed about every 30 seconds while the page is open. Stored Spotify data is removed when the owner disconnects Spotify.</p>
         </section>
 
         <section>

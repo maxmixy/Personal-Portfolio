@@ -7,6 +7,8 @@ type SpotifyTopItem = { id: string; name: string; url: string; image: string | n
 
 type Range = "short_term" | "medium_term" | "long_term";
 type DashboardData = { range: Range; updatedAt: string; stale?: boolean; tracks: SpotifyTopItem[]; artists: SpotifyTopItem[] };
+type ActivityTrack = SpotifyTopItem & { playedAt?: string; progressMs?: number | null; durationMs?: number | null };
+type ActivityData = { updatedAt: string; currentlyPlaying: ActivityTrack | null; recentlyPlayed: ActivityTrack[]; stale?: boolean; errors?: { currentlyPlaying?: "unavailable" | "rate_limited" | "permission_denied"; recentlyPlayed?: "unavailable" | "rate_limited" | "permission_denied" } };
 type ErrorCode = "setup" | "not_published" | "owner_authorization_expired" | "storage_unavailable" | "spotify_unavailable" | "rate_limited" | "network";
 
 const ranges: { value: Range; label: string }[] = [
@@ -28,6 +30,8 @@ const messages: Record<ErrorCode, string> = {
 export default function MusicDashboard({ configured, setupRequired, authorizationError, ownerMode, connected, disconnected, ownerError, storageError }: { configured: boolean; setupRequired: boolean; authorizationError: string | null; ownerMode: boolean; connected: boolean; disconnected: boolean; ownerError: boolean; storageError: boolean }) {
   const [range, setRange] = useState<Range>("medium_term");
   const [data, setData] = useState<DashboardData | null>(null);
+  const [activity, setActivity] = useState<ActivityData | null>(null);
+  const [activityError, setActivityError] = useState<string | null>(null);
   const [error, setError] = useState<ErrorCode | null>(setupRequired ? "setup" : storageError ? "storage_unavailable" : authorizationError ? "spotify_unavailable" : null);
   const [loading, setLoading] = useState(false);
   const [featuredIndex, setFeaturedIndex] = useState(0);
@@ -114,13 +118,54 @@ export default function MusicDashboard({ configured, setupRequired, authorizatio
     return () => window.clearTimeout(timer);
   }, [configured, setupRequired, range, load]);
 
+  const loadActivity = useCallback(async () => {
+    try {
+      const response = await fetch("/music/api/activity", { cache: "no-store" });
+      const payload = await response.json();
+      if (!response.ok) {
+        let message = "Listening activity is temporarily unavailable. Reconnect Spotify from owner settings if this continues.";
+        if (payload.error === "rate_limited") message = "Spotify is rate limiting activity updates.";
+        if (payload.error === "activity_permission_denied") {
+          const denied = Array.isArray(payload.deniedScopes) ? payload.deniedScopes.join(" and ") : "the activity permissions";
+          const providerMessage = typeof payload.providerMessages?.recentlyPlayed === "string" ? payload.providerMessages.recentlyPlayed : null;
+          const recentlyPlayedGrant = payload.scopeGrant?.["user-read-recently-played"];
+          if (providerMessage === "Insufficient client scope" && recentlyPlayedGrant === true) {
+            message = `Spotify's API returned “Insufficient client scope” for ${denied}, even though the saved authorization includes that scope. This points to a Spotify app/token access issue rather than a missing approval. The diagnostic confirms Spotify granted the scope; check the app's access status in the Developer Dashboard.`;
+          } else if (providerMessage === "Insufficient client scope" && recentlyPlayedGrant === false) {
+            message = `Spotify's API rejected ${denied} with “Insufficient client scope,” and the saved token does not include the requested scope. The OAuth consent did not grant it to this app/account.`;
+          } else if (providerMessage === "Insufficient client scope") {
+            message = `Spotify's API rejected ${denied} with “Insufficient client scope.” Spotify did not return scope details with the saved token, so the grant cannot be confirmed yet.`;
+          } else {
+            message = `Spotify's API rejected access to ${denied}. Check the Spotify app's access status in the Developer Dashboard.`;
+          }
+        }
+        if (payload.error === "owner_authorization_expired") message = "Spotify authorization expired. Reconnect the owner account in settings.";
+        if (payload.error === "storage_unavailable") message = "Listening activity storage is not available yet.";
+        if (payload.error === "not_published") message = "The owner needs to connect Spotify before activity can be shown.";
+        setActivityError(message);
+        return;
+      }
+      setActivity(payload as ActivityData);
+      setActivityError(null);
+    } catch {
+      setActivityError("Listening activity could not be reached.");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!configured || setupRequired || !data) return;
+    void loadActivity();
+    const timer = window.setInterval(() => void loadActivity(), 30_000);
+    return () => window.clearInterval(timer);
+  }, [configured, setupRequired, data, loadActivity]);
+
   return (
     <main className="music-page page-width">
       <header className="music-heading">
         <div className="music-heading-copy">
           <p className="eyebrow"><span className="eyebrow-mark" /> PERSONAL DASHBOARD / 01</p>
           <h1>What I’ve<br /><span>been listening to.</span></h1>
-          <p className="music-intro">A snapshot of my most played tracks and artists, based on my Spotify listening history.</p>
+        <p className="music-intro">A snapshot of my most played tracks and artists, with a live look at what I’m listening to.</p>
         </div>
         {featuredTrack ? <div className={`music-feature-wrap ${cardMotion.phase === "exit" ? `is-exiting-${cardMotion.direction === 1 ? "next" : "previous"}` : cardMotion.phase === "enter" ? `is-entering-${cardMotion.direction === 1 ? "next" : "previous"}` : ""}`} onMouseEnter={() => setInteracting(true)} onMouseLeave={() => setInteracting(false)} onFocusCapture={() => setInteracting(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setInteracting(false); }}>
           <a className="music-feature" href={featuredTrack.url} target="_blank" rel="noreferrer" aria-label={`Featured track: ${featuredTrack.name} by ${featuredTrack.subtitle}. Open on Spotify`}>
@@ -149,11 +194,13 @@ export default function MusicDashboard({ configured, setupRequired, authorizatio
         <p className="music-state-label">OWNER CONTROLS</p>
         <h2>Manage the public snapshot</h2>
         <p>Authorize the Spotify account whose top tracks and artists should appear on this page. Visitors do not connect their accounts.</p>
+        {authorizationError === "scopes" ? <p className="music-owner-error" role="alert">Spotify did not return all requested permissions. No new token was saved. Try the authorization again; if this repeats, the scope grant is being blocked for this Spotify app/account.</p> : null}
         {ownerError ? <p className="music-owner-error" role="alert">Enter the correct owner key and confirm public sharing to continue.</p> : null}
         <form action="/music/api/connect" method="post" className="music-owner-form">
           <label htmlFor="owner-key">Owner key</label>
           <input id="owner-key" name="ownerKey" type="password" autoComplete="current-password" required />
-          <label className="music-consent"><input name="publishConsent" type="checkbox" required /> I agree that the account’s top tracks and artists will be visible to anyone who visits this site. See the <a href="/privacy">Spotify data privacy notice</a>.</label>
+          <p className="music-owner-scope-note">Reconnect Spotify to grant permission for recent plays and currently playing status. The new permissions are requested during the Spotify approval step.</p>
+          <label className="music-consent"><input name="publishConsent" type="checkbox" required /> I agree that the account’s top tracks, artists, recent plays, and currently playing track may be visible to anyone who visits this site. See the <a href="/privacy">Spotify data privacy notice</a>.</label>
           <button className="button button-dark" type="submit">Connect owner Spotify <span aria-hidden="true">↗</span></button>
         </form>
         <form action="/music/api/disconnect" method="post" className="music-owner-form music-owner-disconnect">
@@ -171,6 +218,29 @@ export default function MusicDashboard({ configured, setupRequired, authorizatio
             </div>
             <p>{loading ? "Updating…" : `${data.stale ? "Saved snapshot · " : "Updated "}${new Date(data.updatedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`}</p>
           </div>
+
+          <section className="music-activity" aria-label="Recent listening activity">
+            <div className="music-now-playing">
+              <div className="music-activity-heading"><p className="eyebrow">LIVE / SPOTIFY</p><span className={activity?.currentlyPlaying ? "music-live-indicator is-live" : "music-live-indicator"} aria-label={activity?.currentlyPlaying ? "Currently playing" : "Not currently playing"} /></div>
+              {activity?.currentlyPlaying ? <a className="music-now-track" href={activity.currentlyPlaying.url} target="_blank" rel="noreferrer">
+                {activity.currentlyPlaying.image ? <Image src={activity.currentlyPlaying.image} alt="" width={80} height={80} unoptimized /> : <span className="music-art-placeholder" aria-hidden="true">♫</span>}
+                <span className="music-now-copy"><span className="music-now-label">NOW PLAYING</span><strong>{activity.currentlyPlaying.name}</strong><span>{activity.currentlyPlaying.subtitle}</span></span>
+                <span className="music-external" aria-hidden="true">↗</span>
+                {activity.currentlyPlaying.durationMs && activity.currentlyPlaying.progressMs != null ? <span className="music-track-progress" aria-label="Playback progress"><i style={{ width: `${Math.min(100, activity.currentlyPlaying.progressMs / activity.currentlyPlaying.durationMs * 100)}%` }} /></span> : null}
+              </a> : <div className="music-not-playing"><span className="music-now-label">NOW PLAYING</span><p>{activityError ? activityError : activity?.errors?.currentlyPlaying === "permission_denied" ? "Spotify has not granted the currently playing permission. Reconnect in owner settings." : activity?.errors?.currentlyPlaying === "rate_limited" ? "Spotify is rate limiting playback status updates." : activity?.errors?.currentlyPlaying ? "Spotify could not update playback status. Reconnect Spotify in owner settings if this continues." : activity ? "Nothing playing right now." : "Checking Spotify…"}</p></div>}
+            </div>
+            <div className="music-recently-played">
+              <div className="music-activity-heading"><p className="eyebrow">RECENT / LAST 10</p>{activity?.stale ? <span className="music-stale-label">SAVED</span> : null}</div>
+              {activity?.recentlyPlayed.length ? <ol className="music-recent-list">{activity.recentlyPlayed.map((track, index) => <li key={`${track.id}-${track.playedAt ?? index}`}>
+                <a href={track.url} target="_blank" rel="noreferrer" aria-label={`Open ${track.name} on Spotify`}>
+                  {track.image ? <Image src={track.image} alt="" width={48} height={48} unoptimized /> : <span className="music-art-placeholder" aria-hidden="true">♫</span>}
+                  <span className="music-recent-copy"><strong>{track.name}</strong><span>{track.subtitle}</span></span>
+                  <time dateTime={track.playedAt}>{track.playedAt ? new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(new Date(track.playedAt)) : "Recently"}</time>
+                </a>
+              </li>)}</ol> : <p className="music-recent-empty">{activityError ? activityError : activity?.errors?.recentlyPlayed === "permission_denied" ? "Spotify has not granted recently played access. Reconnect in owner settings to grant the required permission." : activity?.errors?.recentlyPlayed === "rate_limited" ? "Spotify is rate limiting recent play updates." : activity?.errors?.recentlyPlayed ? "Spotify could not update recent plays. Reconnect Spotify in owner settings if this continues." : activity ? "No recent plays are available." : "Loading recent plays…"}</p>}
+              {activity?.errors?.recentlyPlayed && activity.recentlyPlayed.length ? <p className="music-activity-warning">Recent plays may be out of date. Reconnect Spotify from owner settings if this continues.</p> : null}
+            </div>
+          </section>
 
           <section className="music-list-section">
             <div className="music-section-heading"><p className="eyebrow">01 / MOST PLAYED</p><h2>Tracks</h2></div>

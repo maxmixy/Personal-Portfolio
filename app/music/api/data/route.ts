@@ -33,6 +33,7 @@ async function refreshTokens(tokens: SpotifyTokens, config: NonNullable<ReturnTy
     accessToken: body.access_token as string,
     refreshToken: (body.refresh_token as string | undefined) ?? tokens.refreshToken,
     expiresAt: Date.now() + Number(body.expires_in) * 1000,
+    scopes: typeof body.scope === "string" ? body.scope.split(/\s+/).filter(Boolean) : tokens.scopes,
   } satisfies SpotifyTokens;
 }
 

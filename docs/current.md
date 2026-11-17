@@ -56,13 +56,13 @@ The portfolio itself should demonstrate engineering ability rather than simply d
 
 > Quality and completion are more important than feature count.
 
-The Library is an owner-managed catalog with borrower accounts and owner-controlled loans. Spotify OAuth, Riot integration, recommendations, and reading analytics remain future work.
+The Library is an owner-managed catalog with borrower accounts and owner-controlled loans. The Spotify source implementation includes top items, recent plays, and currently playing status; live activity still requires the activity-cache migration and owner reauthorization for the expanded scopes. Riot integration, recommendations, and reading analytics remain future work.
 
 ---
 
 ## 3. Current Implementation
 
-The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional. `/music` publicly displays the owner-selected Spotify top tracks and artists after explicit sharing consent. Its local Neon tables are created; Spotify credentials, owner authorization, and live public data still need setup and verification. `/privacy` describes Spotify data handling.
+The homepage, `/about`, `/projects`, the Waste-To-Worth case study, `/experience`, `/skills`, `/achievements`, and `/contact` are implemented and functional. `/music` displays the owner-selected Spotify top tracks and artists and now includes recently played and currently playing sections. Recent activity requires the new cache migration and owner reauthorization with explicit sharing consent before live data can be verified. `/privacy` describes Spotify data handling.
 
 ### Homepage currently includes
 

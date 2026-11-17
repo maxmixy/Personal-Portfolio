@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { saveOwnerTokens, spotifyConfig, spotifyStateCookie, SpotifyTokens } from "../../spotify";
+import { saveOwnerTokens, spotifyConfig, spotifyScopes, spotifyStateCookie, SpotifyTokens } from "../../spotify";
 
 export const runtime = "nodejs";
 
 export async function GET(request: NextRequest) {
   const url = new URL("/music", request.url);
+  // This callback is only reached through the owner-only connection form.
+  // Preserve owner mode so OAuth failures (especially missing scopes) are visible.
+  url.searchParams.set("owner", "1");
   const config = spotifyConfig();
   const code = request.nextUrl.searchParams.get("code");
   const returnedState = request.nextUrl.searchParams.get("state");
@@ -25,7 +28,19 @@ export async function GET(request: NextRequest) {
       });
       if (!response.ok) throw new Error("Spotify token exchange failed");
       const body = await response.json();
-      const tokens: SpotifyTokens = { accessToken: body.access_token, refreshToken: body.refresh_token, expiresAt: Date.now() + body.expires_in * 1000 };
+      const scopes = typeof body.scope === "string" ? body.scope.split(/\s+/).filter(Boolean) : null;
+      if (!scopes || spotifyScopes.some((scope) => !scopes.includes(scope))) {
+        url.searchParams.set("error", "scopes");
+        const result = NextResponse.redirect(url);
+        result.cookies.delete(spotifyStateCookie);
+        return result;
+      }
+      const tokens: SpotifyTokens = {
+        accessToken: body.access_token,
+        refreshToken: body.refresh_token,
+        expiresAt: Date.now() + body.expires_in * 1000,
+        scopes,
+      };
       await saveOwnerTokens(tokens, config.tokenEncryptionKey);
       url.searchParams.set("connected", "1");
       const result = NextResponse.redirect(url);
